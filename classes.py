@@ -1,4 +1,5 @@
 from helpers import validate_coordinates
+from constants import BOARD_SIZE,NUMBER_OF_MINES
 
 class Game:
     def __init__(self, difficulty):
@@ -37,7 +38,7 @@ class Game:
     def create_board(self, row, column):
         pass
 
-    #  -> void
+    # void -> void
     # create a grid-looking board of the current board
     # (0-8) -> the number, X for not opened cells, F for flagged cells, B for mines when losing the game
     def draw_board(self):
