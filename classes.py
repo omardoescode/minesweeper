@@ -1,0 +1,49 @@
+from helpers import validate_coordinates
+
+class Game:
+    def __init__(self, difficulty):
+        self.difficulty = difficulty
+        self.board = []
+        self.started_playing = False # Convert to True when starting the game after the first click
+
+    def start_game(self):
+        pass
+
+    # (int, int) -> void
+    # Dig the current cell with the given row, and conlumn coordinates. 
+    # if covered, if not mine, just reveal it with the surrounding. If mine, declare game_lose, if  
+    # if not convered, if the surrounding flags number matches with the number, dig the rest cells
+    def dig_cell(self, row, column):
+        pass
+
+    # (int, int) -> void
+    # The cell must be covered, toggle the flag on the cell
+    def flag_cell(self, row, column):
+        pass
+
+    # (int, int) -> (listof int)
+    # return the values of the surrounding cells of the given cell
+    # use validate_coordinates
+    def neighboring_cells(self, row, column):
+        pass
+
+    # (int, int) -> void
+    # given the coordinates of the cell clicked first, create a board that must have the given cell with a non-mine value, then call dig_cell to start the game
+    # fill in the mines randomly, then fill in the number depending on the mines
+    def create_board(self, row, column):
+        pass
+
+    # () -> void
+    # create a grid-looking board of the current board
+    # (0-8) -> the number, X for not opened cells, F for flagged cells, B for mines when losing the game
+    def draw_board(self, row, column):
+        pass
+
+class Cell:
+    def __init__(self, row, column, is_flagged, val=None, is_covered=True):
+        self.row = row
+        self.column = column
+        self.is_flagged = is_flagged
+        self.is_covered = True
+        self.val = None # None when game not started, "M" for mine , (0-8) for the number value
+
