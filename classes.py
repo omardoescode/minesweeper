@@ -4,7 +4,11 @@ class Game:
     def __init__(self, difficulty):
         self.difficulty = difficulty
         self.board = []
-        self.started_playing = False # Convert to True when starting the game after the first click
+
+    # void -> boolean
+    # return true if the board has been created
+    def started_playing(self):
+        return self.board == []
 
     def start_game(self):
         pass
