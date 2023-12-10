@@ -11,5 +11,5 @@ if __name__ == '__main__':
         difficulty = validate_input(int, "Enter a difficulty level from 1 to 3")
     
     game = Game(DIFFICULTIES[difficulty])
-    game.draw_board()
+    game.start_game()
 
