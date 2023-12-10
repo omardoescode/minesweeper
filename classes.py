@@ -33,11 +33,12 @@ class Game:
     def create_board(self, row, column):
         pass
 
-    # () -> void
+    #  -> void
     # create a grid-looking board of the current board
     # (0-8) -> the number, X for not opened cells, F for flagged cells, B for mines when losing the game
-    def draw_board(self, row, column):
+    def draw_board(self):
         pass
+
 
 class Cell:
     def __init__(self, row, column, is_flagged, val=None, is_covered=True):
