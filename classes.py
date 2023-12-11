@@ -112,7 +112,7 @@ class Game:
 
 
                 # Print the value of the cell
-                print(f' {self.board[row][column].val} ', end='')
+                print(f' {self.board[row][column]} ', end='')
                 # Print Horizontal Border
                 print('|', end='')
             print()
