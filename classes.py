@@ -1,5 +1,6 @@
 from helpers import validate_coordinates
 from constants import BOARD_SIZE,NUMBER_OF_MINES
+import random
 
 class Game:
     # difficulty "easy" | "medium" | "hard"
@@ -11,7 +12,7 @@ class Game:
         for row in range(rows):
             self.board.append([])
             for column in range(columns):
-                self.board[-1].append(Cell(row, column, False))
+                self.board[-1].append(Cell(row, column, False, 0, False))
 
 
 
@@ -28,19 +29,63 @@ class Game:
     # (int, int) -> void
     # The cell must be covered, toggle the flag on the cell
     def flag_cell(self, row, column):
-        pass
+        if self.board[row][column].is_covered == True:
+            self.board[row][column].is_flagged = not self.board[row][column].is_flagged
 
-    # (int, int) -> (listof int)
-    # return the values of the surrounding cells of the given cell
+    # (int, int) -> (listof Cell)
+    # return a list of the surrounding cells of the given cell
     # use validate_coordinates
     def neighboring_cells(self, row, column):
-        pass
+        neighbors = []
+
+        # Looping through the 8 neighboring cells positions with respect to current cell
+        # Format = (row, column)
+        for position in [(0,1), (0,-1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)]:
+            neighbor_row = row + position[0]
+            neighbor_column = column + position[1]
+
+            # Checking if the position represents a valid index in the board
+            # This check is mainly useful for the cells present on the edges of the board
+            if validate_coordinates(neighbor_row, neighbor_column, BOARD_SIZE[self.difficulty]):
+                neighbors.append(self.board[neighbor_row][neighbor_column])
+
+        return neighbors
+    
+    # (int, int) -> int
+    # Return the count of neighboring mines
+    # Should be used in create_board only    
+    def count_neighboring_mines(self, row, column):
+        return len(list(filter(lambda cell: cell.val == "M", self.neighboring_cells(row, column))))
+
 
     # (int, int) -> void
     # given the coordinates of the cell clicked first, create a board that must have the given cell with a non-mine value, then call click_cell to start the game
     # fill in the mines randomly, then fill in the number depending on the mines
-    def create_board(self, row, column):
-        pass
+    def generate_board(self, row, column):
+        rows, columns = BOARD_SIZE[self.difficulty]
+        
+        mine_positions = []
+
+        # Generate a number of mines with random positions based on the chosen difficulity
+        while len(mine_positions) < NUMBER_OF_MINES[self.difficulty]:
+            # Generate a random position for the mine 
+            mine_row_index = random.randint(0, rows-1)
+            mine_column_index = random.randint(0, columns-1)
+            
+            # Make sure that the mine position wasn't generated before
+            # Also, make sure that the mine position doesn't match the user's first move
+            if(mine_row_index, mine_column_index) not in mine_positions and (mine_row_index, mine_column_index) != (row, column):
+                mine_positions.append((mine_row_index, mine_column_index))
+        
+        # Assign the values of each cell on the board
+        # If its a Mine -> Assign it the value "M"
+        # If its not a Mine -> Assign it the number of neighboring mines 
+        for row_index in range(len(self.board)):
+            for column_index in range(len(self.board[row_index])):
+                if (row_index, column_index) in mine_positions:
+                    self.board[row_index][column_index].val = "M"
+                else:
+                    self.board[row_index][column_index].val = self.count_neighboring_mines(row_index, column_index) 
 
     # void -> void
     # create a grid-looking board of the current board
