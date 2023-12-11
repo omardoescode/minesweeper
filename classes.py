@@ -74,17 +74,16 @@ class Game:
             
             # Make sure that the mine position wasn't generated before
             # Also, make sure that the mine position doesn't match the user's first move
+            # Assign the value "M" to the cell with this position
             if(mine_row_index, mine_column_index) not in mine_positions and (mine_row_index, mine_column_index) != (row, column):
+                self.board[mine_row_index][mine_column_index].val = "M"
                 mine_positions.append((mine_row_index, mine_column_index))
         
         # Assign the values of each cell on the board
-        # If its a Mine -> Assign it the value "M"
         # If its not a Mine -> Assign it the number of neighboring mines 
         for row_index in range(len(self.board)):
             for column_index in range(len(self.board[row_index])):
-                if (row_index, column_index) in mine_positions:
-                    self.board[row_index][column_index].val = "M"
-                else:
+                if (row_index, column_index) not in mine_positions:
                     self.board[row_index][column_index].val = self.count_neighboring_mines(row_index, column_index) 
 
     # void -> void
@@ -113,7 +112,7 @@ class Game:
 
 
                 # Print the value of the cell
-                print(f' {self.board[row][column]} ', end='')
+                print(f' {self.board[row][column].val} ', end='')
                 # Print Horizontal Border
                 print('|', end='')
             print()
