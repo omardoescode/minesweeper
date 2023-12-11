@@ -1,5 +1,5 @@
 from helpers import validate_coordinates
-from constants import BOARD_SIZE,NUMBER_OF_MINES
+from constants import BOARD_SIZE,NUMBER_OF_MINES, COORDINATES_TRANSITIONS
 import random
 
 class Game:
@@ -10,14 +10,15 @@ class Game:
         
         rows, columns = BOARD_SIZE[difficulty]
         for row in range(rows):
-            self.board.append([])
+            self.board.append([]) # a new row
             for column in range(columns):
-                self.board[-1].append(Cell(row, column, False, 0, False))
+                self.board[-1].append(Cell(row, column, False)) # a new element in the current/last row
 
 
 
     def start_game(self):
-        pass
+        self.generate_board(1,1)
+        self.draw_board()
 
     # (int, int) -> void
     # click the current cell with the given row, and conlumn coordinates. 
@@ -40,7 +41,7 @@ class Game:
 
         # Looping through the 8 neighboring cells positions with respect to current cell
         # Format = (row, column)
-        for position in [(0,1), (0,-1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)]:
+        for position in COORDINATES_TRANSITIONS:
             neighbor_row = row + position[0]
             neighbor_column = column + position[1]
 
@@ -130,8 +131,12 @@ class Cell:
         self.val = val # None when game not started, "M" for mine , (0-8) for the number value
 
     def __str__(self):
-        if self.val is not None or not self.is_covered: # return X for the uncalculated values (game not started) or when the cell is still covered
-            return self.val
-        return "X"
+        if self.is_flagged:
+            return "F"
+        if not self.is_covered and self.val == "M":
+            return "M"
+        if self.is_covered or self.val is None:
+            return "X"
+        return str(self.val)
 
 

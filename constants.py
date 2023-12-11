@@ -15,6 +15,8 @@ BOARD_SIZE = {
     "hard": (30, 16),
 }
 
+COORDINATES_TRANSITIONS = [(0,1), (0,-1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)]
+
 WELCOME_MESSAGE = """Hola! Welcome to the most exhilarating game ever crafted by the brilliant minds at ByteBusters. I go by the name Revolt, and my mission is to guide you through this thrilling adventure.
 
 Before you dive in, let me equip you with the knowledge you need to conquer this challenge:
@@ -23,6 +25,7 @@ In each move, you must choose a row and column. The fate of the game rests in yo
 
 Remember the symbols:
 - X: Covered cell
+- F: Flaged cell
 - Numbers (0-8): Indicates neighboring mines
 - M: You clicked a mine, and unfortunately, the game is lost.
 
