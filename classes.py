@@ -7,6 +7,8 @@ class Game:
     def __init__(self, difficulty):
         self.difficulty = difficulty
         self.board = []
+        self.playing = True
+        self.start_playing = False
         
         rows, columns = BOARD_SIZE[difficulty]
         for row in range(rows):
@@ -17,15 +19,41 @@ class Game:
 
 
     def start_game(self):
-        self.generate_board(1,1)
-        self.draw_board()
+        pass
+    
+    def game_lose(self):
+        print("You lost!")
+
+    # recursion to check and uncover all cells with zero value & their adjacent cells.
+    def zero_chain(self, neighbors):
+        for cell in neighbors:
+            row = cell.row
+            column = cell.column
+            if cell.is_covered:
+                match cell.val:
+                    case 0:
+                        cell.is_covered = False
+                        self.zero_chain(self.neighboring_cells(row, column))
+                    case _:
+                        cell.is_covered = False
+                        continue
 
     # (int, int) -> void
     # click the current cell with the given row, and conlumn coordinates. 
     # if covered, if not mine, just reveal it with the surrounding. If mine, declare game_lose, if  
     # if not convered, if the surrounding flags number matches with the number, click the rest cells
     def click_cell(self, row, column):
-        pass
+        if self.board[row][column].val != None and self.board[row][column].is_covered:
+            self.board[row][column].is_covered = False
+    # checks cell value
+            match self.board[row][column].val :
+                case "M":
+                    self.game_lose()
+                case  0: 
+                    neighbors = self.neighboring_cells(row, column)
+                    self.zero_chain(neighbors)
+                case _:
+                    self.board[row][column].is_covered = False
 
     # (int, int) -> void
     # The cell must be covered, toggle the flag on the cell
@@ -135,6 +163,8 @@ class Cell:
             return "F"
         if not self.is_covered and self.val == "M":
             return "M"
+        if self.val == 0 and self.is_covered == False:
+            return " "
         if self.is_covered or self.val is None:
             return "X"
         return str(self.val)
