@@ -1,16 +1,16 @@
 from helpers import validate_coordinates, every, flat
-from constants import BOARD_SIZE,NUMBER_OF_MINES, COORDINATES_TRANSITIONS
+from constants import COORDINATES_TRANSITIONS
 import random
 
 class Game:
     # difficulty "easy" | "medium" | "hard"
-    def __init__(self, difficulty):
-        self.difficulty = difficulty
+    def __init__(self, rows, columns, mines):
+        self.board_size = (rows, columns)
+        self.mines = mines
         self.board = []
         self.playing = True
         self.start_playing = False
         
-        rows, columns = BOARD_SIZE[difficulty]
         for row in range(rows):
             self.board.append([]) # a new row
             for column in range(columns):
@@ -35,7 +35,7 @@ class Game:
                 # Check if rows, and columns are numbers
                 try:
                     row, column = map(lambda val: int(val) - 1, command[:2])
-                    if not validate_coordinates(row, column, BOARD_SIZE[self.difficulty]):
+                    if not validate_coordinates(row, column, self.board_size):
                         print("Invalid Coordinates")
                         continue
 
@@ -52,6 +52,8 @@ class Game:
                     print("Invalid Command")
 
             cell = self.board[row][column]
+            if cell.is_flagged and option == 'c':
+                option = 'f'
 
             if cell.is_covered:
                 if option == 'c':
@@ -70,6 +72,7 @@ class Game:
         return every(check_cell, flat(self.board)) 
     def game_lose(self):
         self.playing = False
+        self.draw_board()
         print("You lost!")
 
 
@@ -106,8 +109,9 @@ class Game:
                     zero_chain(neighbors)
         
         if self.check_win():
+            self.draw_board()
             print("You won!!")
-            self.playing == False
+            self.playing = False
 
     # (int, int) -> void
     # The cell must be covered, toggle the flag on the cell
@@ -129,7 +133,7 @@ class Game:
 
             # Checking if the position represents a valid index in the board
             # This check is mainly useful for the cells present on the edges of the board
-            if validate_coordinates(neighbor_row, neighbor_column, BOARD_SIZE[self.difficulty]):
+            if validate_coordinates(neighbor_row, neighbor_column, self.board_size):
                 neighbors.append(self.board[neighbor_row][neighbor_column])
 
         return neighbors
@@ -145,12 +149,12 @@ class Game:
     # given the coordinates of the cell clicked first, create a board that must have the given cell with a non-mine value, then call click_cell to start the game
     # fill in the mines randomly, then fill in the number depending on the mines
     def generate_board(self, row, column):
-        rows, columns = BOARD_SIZE[self.difficulty]
+        rows, columns = self.board_size
         
         mine_positions = []
 
         # Generate a number of mines with random positions based on the chosen difficulity
-        while len(mine_positions) < NUMBER_OF_MINES[self.difficulty]:
+        while len(mine_positions) < self.mines:
             # Generate a random position for the mine 
             mine_row_index = random.randint(0, rows-1)
             mine_column_index = random.randint(0, columns-1)
@@ -173,7 +177,7 @@ class Game:
     # create a grid-looking board of the current board
     # (0-8) -> the number, X for not opened cells, F for flagged cells, B for mines when losing the game
     def draw_board(self):
-        rows, columns = BOARD_SIZE[self.difficulty]
+        rows, columns = self.board_size
             
         # Print First Row
         print('     ', end="")

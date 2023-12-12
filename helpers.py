@@ -5,12 +5,17 @@ def validate_coordinates(row, column, board_size):
     return row in range(rows) and column in range(columns)
 
 # (type, string) -> type
-def validate_input(input_type, input_string): 
+def validate_input(input_type, input_string, predicate=lambda _: True): 
     try:
-        return input_type(input(input_string))
-    except ValueError:
+        val = input_type(input(input_string))
+        if not predicate(val):
+            raise Exception()
+        return val
+    except KeyboardInterrupt:
+        raise KeyboardInterrupt("Program Terminated")
+    except:
         print("Invalid Value, please try again")
-        return validate_input(type, input_string)
+        return validate_input(input_type, input_string, predicate)
 
 def every(func, lst):
     if lst == []:
