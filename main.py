@@ -2,7 +2,7 @@ from helpers import validate_input
 from classes import Game
 from constants import WELCOME_MESSAGE, DIFFICULTIES
 
-if __name__ == '__main__':
+def main():
     print(WELCOME_MESSAGE)
 
     print("Choose the difficulty\n1. Easy\n2. Medium\n3. Hard")
@@ -13,3 +13,5 @@ if __name__ == '__main__':
     game = Game(DIFFICULTIES[difficulty])
     game.start_game()
 
+if __name__ == '__main__':
+    main()

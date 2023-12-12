@@ -1,4 +1,4 @@
-from helpers import validate_coordinates
+from helpers import validate_coordinates, every, flat
 from constants import BOARD_SIZE,NUMBER_OF_MINES, COORDINATES_TRANSITIONS
 import random
 
@@ -19,41 +19,95 @@ class Game:
 
 
     def start_game(self):
-        pass
-    
+        while self.playing:
+            self.draw_board()
+            is_valid_input = False
+            while not is_valid_input:
+                command = input("Command: ").lower().strip().split(" ")
+                option = 'c'
+
+
+                # Check for the length of the command
+                if len(command) not in [2,3]:
+                    print("Invalid Command")
+                    continue
+                
+                # Check if rows, and columns are numbers
+                try:
+                    row, column = map(lambda val: int(val) - 1, command[:2])
+                    if not validate_coordinates(row, column, BOARD_SIZE[self.difficulty]):
+                        print("Invalid Coordinates")
+                        continue
+
+                    if len(command) == 3:
+                        option = 'f' if command[2] == 'f' else 'c'
+
+                        if not self.start_playing:
+                            print("You cannot flag on the first move!")
+                            continue
+
+                    is_valid_input = True
+
+                except:
+                    print("Invalid Command")
+
+            cell = self.board[row][column]
+
+            if cell.is_covered:
+                if option == 'c':
+                    self.click_cell(row, column)
+                elif option == 'f':
+                    self.flag_cell(row, column) # Either flag or unflag
+            else:
+                print("Cell already clicked!!")
+
+
+    # void -> boolean
+    # return true if all the cells that have numbers have been uncovered
+    def check_win(self):
+        def check_cell(cell):
+            return type(cell.val) == int and not cell.is_covered or type(cell.val) != int
+        return every(check_cell, flat(self.board)) 
     def game_lose(self):
+        self.playing = False
         print("You lost!")
 
-    # recursion to check and uncover all cells with zero value & their adjacent cells.
-    def zero_chain(self, neighbors):
-        for cell in neighbors:
-            row = cell.row
-            column = cell.column
-            if cell.is_covered:
-                match cell.val:
-                    case 0:
-                        cell.is_covered = False
-                        self.zero_chain(self.neighboring_cells(row, column))
-                    case _:
-                        cell.is_covered = False
-                        continue
 
     # (int, int) -> void
     # click the current cell with the given row, and conlumn coordinates. 
     # if covered, if not mine, just reveal it with the surrounding. If mine, declare game_lose, if  
     # if not convered, if the surrounding flags number matches with the number, click the rest cells
     def click_cell(self, row, column):
+        # recursion to check and uncover all cells with zero value & their adjacent cells.
+        def zero_chain(neighbors):
+            for cell in neighbors:
+                row = cell.row
+                column = cell.column
+                if cell.is_covered:
+                    match cell.val:
+                        case 0:
+                            cell.is_covered = False
+                            zero_chain(self.neighboring_cells(row, column))
+                        case _:
+                            cell.is_covered = False
+
+        if not self.start_playing:
+            self.generate_board(row, column)
+            self.start_playing = True
+
         if self.board[row][column].val != None and self.board[row][column].is_covered:
             self.board[row][column].is_covered = False
     # checks cell value
             match self.board[row][column].val :
                 case "M":
                     self.game_lose()
-                case  0: 
+                case 0: 
                     neighbors = self.neighboring_cells(row, column)
-                    self.zero_chain(neighbors)
-                case _:
-                    self.board[row][column].is_covered = False
+                    zero_chain(neighbors)
+        
+        if self.check_win():
+            print("You won!!")
+            self.playing == False
 
     # (int, int) -> void
     # The cell must be covered, toggle the flag on the cell
@@ -104,7 +158,7 @@ class Game:
             # Make sure that the mine position wasn't generated before
             # Also, make sure that the mine position doesn't match the user's first move
             # Assign the value "M" to the cell with this position
-            if(mine_row_index, mine_column_index) not in mine_positions and (mine_row_index, mine_column_index) != (row, column):
+            if (mine_row_index, mine_column_index) not in mine_positions and (mine_row_index, mine_column_index) != (row, column):
                 self.board[mine_row_index][mine_column_index].val = "M"
                 mine_positions.append((mine_row_index, mine_column_index))
         
