@@ -13,7 +13,7 @@ class Game:
         for row in range(rows):
             self.board.append([]) # a new row
             for column in range(columns):
-                self.board[-1].append(Cell(row, column, False)) # a new element in the last row
+                self.board[-1].append(Cell(row, column)) # a new element in the last row
 
 
 
@@ -223,7 +223,7 @@ class Game:
 
 
 class Cell:
-    def __init__(self, row, column, is_flagged, val=None, is_covered=True):
+    def __init__(self, row, column, is_flagged = False, val=None, is_covered=True):
         self.row = row
         self.column = column
         self.is_flagged = is_flagged
