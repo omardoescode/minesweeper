@@ -1,3 +1,9 @@
+import pip
+try:
+    import termcolor
+except:
+    pip.main()
+
 # (int, int) (int, int) -> boolean
 # validate if the given coordinates can be found in the given board, both the coordiantes
 def validate_coordinates(row, column, board_size):
@@ -26,3 +32,9 @@ def flat(lst):
     if not lst: # lst is empty
         return []
     return [*lst[0], *flat(lst[1:])]
+
+
+# T, str -> void
+# given data of any type T, and a string that indicates a color, print the data with the given color
+def print_colored(data, color):
+    pass

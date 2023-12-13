@@ -156,6 +156,7 @@ class Game:
     def check_chordable(self, row, column):
         pass
 
+    # int, int -> void
     def chord(self, row, column):
         pass
 

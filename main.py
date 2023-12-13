@@ -11,7 +11,7 @@ def main():
     if difficulty == 4:
         rows = validate_input(int, "Enter the number of rows: ", lambda val: val > 2)
         columns = validate_input(int, "Enter the number of columns: ", lambda val: val > 2)
-        mines = validate_input(int, "Enter the number of the mines: ", lambda val: val > 0 and val < rows * columns)
+        mines = validate_input(int, "Enter the number of the mines: ", lambda val: val > 0 and val < rows * columns / 2) 
     else:
         rows, columns = BOARD_SIZE[DIFFICULTIES[difficulty]]
         mines = NUMBER_OF_MINES[DIFFICULTIES[difficulty]]
