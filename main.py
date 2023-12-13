@@ -1,9 +1,9 @@
 from helpers import validate_input
 from classes import Game
-from constants import WELCOME_MESSAGE, DIFFICULTIES, NUMBER_OF_MINES, BOARD_SIZE
-
+from constants import say_welcome, DIFFICULTIES, NUMBER_OF_MINES, BOARD_SIZE
 def main():
-    print(WELCOME_MESSAGE)
+    name = validate_input(str, "Enter your name: ", lambda val: val != "")
+    say_welcome(name)
 
     print("Choose the difficulty\n1. Easy\n2. Medium\n3. Hard\n4. Custom")
     difficulty = validate_input(int , "Input: ", lambda val: val in [1,2,3,4])

@@ -3,7 +3,6 @@ from constants import COORDINATES_TRANSITIONS
 import random
 
 class Game:
-    # difficulty "easy" | "medium" | "hard"
     def __init__(self, rows, columns, mines):
         self.board_size = (rows, columns)
         self.mines = mines
@@ -14,42 +13,15 @@ class Game:
         for row in range(rows):
             self.board.append([]) # a new row
             for column in range(columns):
-                self.board[-1].append(Cell(row, column, False)) # a new element in the current/last row
+                self.board[-1].append(Cell(row, column, False)) # a new element in the last row
 
 
 
     def start_game(self):
         while self.playing:
             self.draw_board()
-            is_valid_input = False
-            while not is_valid_input:
-                command = input("Command: ").lower().strip().split(" ")
-                option = 'c'
 
-
-                # Check for the length of the command
-                if len(command) not in [2,3]:
-                    print("Invalid Command")
-                    continue
-                
-                # Check if rows, and columns are numbers
-                try:
-                    row, column = map(lambda val: int(val) - 1, command[:2])
-                    if not validate_coordinates(row, column, self.board_size):
-                        print("Invalid Coordinates")
-                        continue
-
-                    if len(command) == 3:
-                        option = 'f' if command[2] == 'f' else 'c'
-
-                        if not self.start_playing:
-                            print("You cannot flag on the first move!")
-                            continue
-
-                    is_valid_input = True
-
-                except:
-                    print("Invalid Command")
+            row, column, option = self.handle_input()
 
             cell = self.board[row][column]
             if cell.is_flagged and option == 'c':
@@ -70,10 +42,45 @@ class Game:
         def check_cell(cell):
             return type(cell.val) == int and not cell.is_covered or type(cell.val) != int
         return every(check_cell, flat(self.board)) 
+
     def game_lose(self):
         self.playing = False
         self.draw_board()
         print("You lost!")
+
+    # void -> int, int, 'c' or 'f'
+    def handle_input(self):
+        is_valid_input = False
+        while not is_valid_input:
+            command = input("Command: ").lower().strip().split(" ")
+            option = 'c'
+
+
+            # Check for the length of the command
+            if len(command) not in [2,3]:
+                print("Invalid Command")
+                continue
+            
+            # Check if rows, and columns are numbers
+            try:
+                row, column = map(lambda val: int(val) - 1, command[:2])
+                if not validate_coordinates(row, column, self.board_size):
+                    print("Invalid Coordinates")
+                    continue
+
+                if len(command) == 3:
+                    option = 'f' if command[2] == 'f' else 'c'
+
+                    if not self.start_playing:
+                        print("You cannot flag on the first move!")
+                        continue
+
+                is_valid_input = True
+
+            except:
+                print("Invalid Command")
+            
+            return row, column, option
 
 
     # (int, int) -> void
@@ -144,6 +151,13 @@ class Game:
     def count_neighboring_mines(self, row, column):
         return len(list(filter(lambda cell: cell.val == "M", self.neighboring_cells(row, column))))
 
+    # int, int -> Boolean
+    # return true if the number assigned to the cell and the number isn't zero has the same number of surrounding flags
+    def check_chordable(self, row, column):
+        pass
+
+    def chord(self, row, column):
+        pass
 
     # (int, int) -> void
     # given the coordinates of the cell clicked first, create a board that must have the given cell with a non-mine value, then call click_cell to start the game

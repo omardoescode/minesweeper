@@ -17,7 +17,7 @@ BOARD_SIZE = {
 
 COORDINATES_TRANSITIONS = [(0,1), (0,-1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)]
 
-WELCOME_MESSAGE = """Hola! Welcome to the most exhilarating game ever crafted by the brilliant minds at ByteBusters. I go by the name Revolt, and my mission is to guide you through this thrilling adventure.
+say_welcome = lambda name: print(f"""Hola {name}! Welcome to the most exhilarating game ever crafted by the brilliant minds at ByteBusters. I go by the name Revolt, and my mission is to guide you through this thrilling adventure.
 
 Before you dive in, let me equip you with the knowledge you need to conquer this challenge:
 
@@ -29,9 +29,10 @@ Remember the symbols:
 - Numbers (0-8): Indicates neighboring mines
 - M: You clicked a mine, and unfortunately, the game is lost.
 
-Remember, clicking on a covered cell is only safe if the number of flags surrounding it matches the indicated number. Stay vigilant!
-
-But beware, my friend, for the treacherous mines lie in wait. A single misstep, a click on the wrong spot, and it's game over. Choose your moves wisely, and let your strategic prowess shine.
+To enter a command, it has to be in the following format: <row> <column> <f|opional>
+Examples:
+- 1 1: Click the cell with coordinates (1, 1)
+- 1 1 f: Toggle the flag in the coordinates (1, 1)
 
 Now, venture forth and may your clicks be true!
-"""
+""")
