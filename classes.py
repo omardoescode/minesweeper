@@ -25,13 +25,15 @@ class Game:
 
             cell = self.board[row][column]
             if cell.is_flagged and option == 'c':
-                option = 'f'
+                option = 'f' # change the flagged value to c if the it's already flagged
 
             if cell.is_covered:
                 if option == 'c':
                     self.click_cell(row, column)
                 elif option == 'f':
                     self.flag_cell(row, column) # Either flag or unflag
+            elif self.check_chordable(cell.row, cell.column):
+                self.chord(cell.row, cell.column)
             else:
                 print("Cell already clicked!!")
 
@@ -134,9 +136,9 @@ class Game:
 
         # Looping through the 8 neighboring cells positions with respect to current cell
         # Format = (row, column)
-        for position in COORDINATES_TRANSITIONS:
-            neighbor_row = row + position[0]
-            neighbor_column = column + position[1]
+        for dx, dy in COORDINATES_TRANSITIONS:
+            neighbor_row = row + dx
+            neighbor_column = column + dy
 
             # Checking if the position represents a valid index in the board
             # This check is mainly useful for the cells present on the edges of the board
@@ -147,18 +149,27 @@ class Game:
     
     # (int, int) -> int
     # Return the count of neighboring mines
-    # Should be used in create_board only    
     def count_neighboring_mines(self, row, column):
         return len(list(filter(lambda cell: cell.val == "M", self.neighboring_cells(row, column))))
+    
+    ## (int, int) -> int
+    # Return the count of neighboring flags
+    def count_neighboring_flags(self, row, column):
+        return len(list(filter(lambda cell: cell.is_flagged , self.neighboring_cells(row, column))))
 
     # int, int -> Boolean
     # return true if the number assigned to the cell and the number isn't zero has the same number of surrounding flags
     def check_chordable(self, row, column):
-        pass
+        cell = self.board[row][column]
+        return type(cell.val) == int and cell.val != 0 and cell.val == self.count_neighboring_flags(row, column)
 
     # int, int -> void
     def chord(self, row, column):
-        pass
+        neighboring_cells = self.neighboring_cells(row, column)
+        neighboring_cells_uncovered = filter(lambda cell: cell.is_covered and not cell.is_flagged, neighboring_cells)
+
+        for cell in neighboring_cells_uncovered:
+            self.click_cell(cell.row, cell.column)
 
     # (int, int) -> void
     # given the coordinates of the cell clicked first, create a board that must have the given cell with a non-mine value, then call click_cell to start the game
