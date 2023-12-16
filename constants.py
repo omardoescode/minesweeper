@@ -14,6 +14,17 @@ BOARD_SIZE = {
     "medium": (16, 16),
     "hard": (30, 16),
 }
+VALUE_COLORS ={
+    1:"light_blue",
+    2:"green",
+    3:"light_red",
+    4:"blue",
+    5:"red",
+    6:"cyan",
+    7:"dark_grey",
+    8:"light_grey"
+}
+
 
 COORDINATES_TRANSITIONS = [(0,1), (0,-1), (1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1)]
 

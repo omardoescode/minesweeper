@@ -1,5 +1,5 @@
-from helpers import validate_coordinates, every, flat
-from constants import COORDINATES_TRANSITIONS
+from helpers import validate_coordinates, every, flat, print_colored
+from constants import COORDINATES_TRANSITIONS, VALUE_COLORS
 import random
 
 class Game:
@@ -225,7 +225,11 @@ class Game:
 
 
                 # Print the value of the cell
-                print(f' {self.board[row][column]} ', end='')
+                if type(self.board[row][column].val) == int and self.board[row][column].val != 0 and not(self.board[row][column].is_covered):
+                    colored_cell = print_colored((self.board[row][column]),VALUE_COLORS[self.board[row][column].val])
+                    print(f' {colored_cell} ',end='')
+                else:
+                    print(f' {self.board[row][column]} ', end='')
                 # Print Horizontal Border
                 print('|', end='')
             print()

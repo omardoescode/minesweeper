@@ -1,6 +1,7 @@
 import pip
 try:
     import termcolor
+    from termcolor import colored
 except:
     pip.main()
 
@@ -37,4 +38,5 @@ def flat(lst):
 # T, str -> void
 # given data of any type T, and a string that indicates a color, print the data with the given color
 def print_colored(data, color):
-    pass
+            colored_text = colored(str(data),color=color)
+            return colored_text
