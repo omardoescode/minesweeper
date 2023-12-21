@@ -318,3 +318,67 @@ class Board:
 
 # TODO
 # Create a page to ask for name
+class PlayerNamePage:
+    def __init__(self, screen, fonts):
+        self.title_text = "Enter Your Name"
+        self.screen = screen
+        self.fonts = fonts
+        self.submit_button = pygame.Rect(0, 0, 0, 0)
+        self.text_input = ""
+        self.input_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 40)
+        self.active = False
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.submit_button.collidepoint(event.pos):
+                    if self.text_input:
+                        return "Board"  # Proceed to the game board
+                if self.input_rect.collidepoint(event.pos):
+                    self.active = not self.active
+                else:
+                    self.active = False
+                self.text_input = ""
+
+            elif event.type == pygame.KEYDOWN:
+                if self.active:
+                    if event.key == pygame.K_RETURN:
+                        if self.text_input:
+                            return "Board"  # Proceed to the game board
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.text_input = self.text_input[:-1]
+                    else:
+                        self.text_input += event.unicode
+
+    def draw_input_box(self):
+        pygame.draw.rect(self.screen, (255, 255, 255), self.input_rect, 2)
+        text_surface = self.fonts["md"].render(self.text_input, True, (0, 0, 0))
+        self.screen.blit(text_surface, (self.input_rect.x + 5, self.input_rect.y + 5))
+
+    def draw_submit_button(self):
+        self.submit_button = create_button(
+            WIDTH // 2,
+            HEIGHT // 2 + 60,
+            100,
+            40,
+            "Submit",
+            (255, 255, 255),
+            PRIMARY_COLOR,
+            (0, 0, 0),
+            self.screen,
+            self.fonts,
+        )
+
+    def update(self):
+        pygame.display.set_caption(self.title_text)
+        self.screen.fill(PRIMARY_COLOR)
+
+        text_surface = self.fonts["lg"].render("Enter Your Name", True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))
+        self.screen.blit(text_surface, text_rect.topleft)
+
+        self.draw_input_box()
+        self.draw_submit_button()
