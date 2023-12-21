@@ -6,9 +6,10 @@ from gui_helpers import create_button
 from gui_constants import HEIGHT, WIDTH, PRIMARY_COLOR
 
 
-class GUI(Game):
+class GUI:
     def __init__(self, rows, columns, mines):
-        super().__init__(rows, columns, mines)
+        self.game = Game(rows, columns, mines)
+        self.game.generate_board(1, 1)
         pygame.init()
         pygame.display.set_caption("Minesweeper")
         pygame.font.init()
@@ -37,13 +38,7 @@ class GUI(Game):
                 case "difficulty":
                     current_page = Difficulty(self.screen, self.fonts)
                 case "board":
-                    current_page = Board(
-                        self.screen,
-                        self.fonts,
-                        [['x']*16]*16,
-                        16,
-                        16
-                    )
+                    current_page = Board(self.screen, self.fonts, self.game, 16, 16)
 
             current_page.update()
 
@@ -180,17 +175,33 @@ class Difficulty:
             {"obj": go_back_button, "val": "main_menu", "kwargs": {}}
         )
 
+
 class Cell:
-    def __init__(self, screen, coordinates, is_clicked, is_flagged, value, covered_image, uncovered_image, hover_image, value_image, flag_image, cell_size, border_size):
+    def __init__(
+        self,
+        screen,
+        coordinates,
+        info,
+        covered_image,
+        uncovered_image,
+        hover_image,
+        value_image,
+        flag_image,
+        cell_size,
+        border_size,
+    ):
         self.coordinates = coordinates
         self.screen = screen
         self.cell_size = cell_size
         self.border_size = border_size
-        self.value = value
-        self.rectangle = pygame.Rect(self.border_size + self.cell_size * self.coordinates[0],self.border_size+ self.cell_size * self.coordinates[1], self.cell_size, self.cell_size)
+        self.info = info
+        self.rectangle = pygame.Rect(
+            self.border_size + self.cell_size * self.coordinates[0],
+            self.border_size + self.cell_size * self.coordinates[1],
+            self.cell_size,
+            self.cell_size,
+        )
         self.is_hovered = False
-        self.is_clicked = is_clicked
-        self.is_flagged = is_flagged
         self.covered_image = covered_image
         self.uncovered_image = uncovered_image
         self.hover_image = hover_image
@@ -198,36 +209,40 @@ class Cell:
         self.flag_image = flag_image
 
     def reveal_cell(self):
-        self.is_clicked = True
-    
+        self.info.is_covered = False
+
     def flag_cell(self):
-        self.is_flagged = True
+        self.info.is_flagged = True
 
     def draw_cell(self):
-        pygame.draw.rect(self.screen, (0,0,0), self.rectangle)
-        if self.is_clicked:
+        pygame.draw.rect(self.screen, (0, 0, 0), self.rectangle)
+        if not self.info.is_covered:
             self.screen.blit(self.uncovered_image, self.rectangle.topleft)
-            self.screen.blit(self.value_image, self.value_image.get_rect(center= self.rectangle.center))
-        elif self.is_flagged:
-            self.screen.blint(self.flag_image, self.flag_image.get_rect(center= self.rectangle.center))
+            self.screen.blit(
+                self.value_image,
+                self.value_image.get_rect(center=self.rectangle.center),
+            )
+        elif self.info.is_flagged:
+            self.screen.blit(
+                self.flag_image, self.flag_image.get_rect(center=self.rectangle.center)
+            )
         else:
             self.screen.blit(self.covered_image, self.rectangle.topleft)
 
         is_hovered = self.rectangle.collidepoint(pygame.mouse.get_pos())
-    
+
         if is_hovered:
-            
             if pygame.mouse.get_pressed()[0]:
                 self.reveal_cell()
             elif pygame.mouse.get_pressed()[2]:
                 self.flag_cell()
-            else:                
+            else:
                 self.screen.blit(self.hover_image, self.rectangle.topleft)
-        
+
 
 class Board:
-    def __init__(self, screen, fonts, board, rows, columns, cell_size= 40, border_size = 1):
-        self.title_text = "board"
+    def __init__(self, screen, fonts, game, rows, columns, cell_size=40, border_size=1):
+        self.title_text = "game"
         self.screen = screen
         self.fonts = fonts
         self.rows = rows
@@ -237,22 +252,51 @@ class Board:
         self.width = columns * cell_size
         self.height = rows * cell_size
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.board = board
-        self.covered_image = pygame.transform.scale(pygame.image.load('./assets/in_game_icons/board/covered-cell.png'), (self.cell_size-self.border_size, self.cell_size-self.border_size))
-        self.uncovered_image = pygame.transform.scale(pygame.image.load('./assets/in_game_icons/board/dug-cell.png'), (self.cell_size-self.border_size, self.cell_size-self.border_size))
-        self.hover_image = pygame.transform.scale(pygame.image.load('./assets/in_game_icons/board/hover-cell.png'), (self.cell_size-self.border_size, self.cell_size-self.border_size))
-        self.flag_image = pygame.transform.scale(pygame.image.load('./assets/in_game_icons/board/red-flag.png'), (self.cell_size, self.cell_size))
+        self.game = game
+        self.covered_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/board/covered-cell.png"),
+            (self.cell_size - self.border_size, self.cell_size - self.border_size),
+        )
+        self.uncovered_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/board/dug-cell.png"),
+            (self.cell_size - self.border_size, self.cell_size - self.border_size),
+        )
+        self.hover_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/board/hover-cell.png"),
+            (self.cell_size - self.border_size, self.cell_size - self.border_size),
+        )
+        self.flag_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/board/red-flag.png"),
+            (self.cell_size, self.cell_size),
+        )
         self.value_images = []
 
         for i in range(8):
-            self.value_images.append(pygame.transform.scale(pygame.image.load(f'./assets/in_game_icons/board/dug/{i+1}-icon.png'), (self.cell_size*0.5, self.cell_size*0.5)))
+            self.value_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(
+                        f"./assets/in_game_icons/board/dug/{i+1}-icon.png"
+                    ),
+                    (self.cell_size * 0.5, self.cell_size * 0.5),
+                )
+            )
 
     def draw_cells(self):
-        for row_index in range(len(self.board)):
-            for column_index in range(len(self.board[row_index])):
-                cell = Cell(self.screen, (column_index, row_index), False, False, 1, self.covered_image, self.uncovered_image, self.hover_image, self.value_images[1-1], self.flag_image, self.cell_size, self.border_size)
+        for row_index in range(len(self.game.board)):
+            for column_index in range(len(self.game.board[row_index])):
+                cell = Cell(
+                    self.screen,
+                    (column_index, row_index),
+                    self.game.board[row_index][column_index],
+                    self.covered_image,
+                    self.uncovered_image,
+                    self.hover_image,
+                    self.value_images[1 - 1],
+                    self.flag_image,
+                    self.cell_size,
+                    self.border_size,
+                )
                 cell.draw_cell()
-
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -268,9 +312,9 @@ class Board:
         self.draw_cells()
         pygame.display.set_caption("Enjoy!!!")
 
-
         # TODO
-        # Desing the board funcitonality
+        # Desing the game.board funcitonality
+
 
 # TODO
 # Create a page to ask for name
