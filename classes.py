@@ -245,7 +245,7 @@ class Cell:
         self.is_flagged = is_flagged
         self.is_covered = is_covered
         self.val = val # None when game not started, "M" for mine , (0-8) for the number value
-
+'''
     def __str__(self):
         if self.is_flagged:
             return "F"
@@ -256,5 +256,5 @@ class Cell:
         if self.is_covered or self.val is None:
             return "X"
         return str(self.val)
-
+'''
 
