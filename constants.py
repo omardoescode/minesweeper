@@ -3,6 +3,7 @@ DIFFICULTIES = {
     2: "medium",
     3: "hard",
 }
+
 NUMBER_OF_MINES = {"easy": 10, "medium": 40, "hard": 99}
 
 BOARD_SIZE = {
