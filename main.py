@@ -1,6 +1,7 @@
 from helpers import validate_input
 from classes import Game
 from constants import say_welcome, DIFFICULTIES, NUMBER_OF_MINES, BOARD_SIZE
+from timer import Timer
 def main():
     name = validate_input(str, "Enter your name: ", lambda val: val != "")
     say_welcome(name)
@@ -20,5 +21,38 @@ def main():
     game = Game(rows, columns, mines)
     game.start_game()
 
+def start_game():
+    # Initialize the Timer
+    timer = Timer()
+    timer.start_timer()
+
+    # ... (rest of your game setup and logic)
+    print("Game started!")
+
+    # Example loop to simulate gameplay (replace this with your actual game logic)
+    try:
+        while True:
+            # Perform game actions here
+
+            # For instance, check the elapsed time
+            elapsed_time = timer.get_elapsed_time()
+            print(f"Elapsed Time: {elapsed_time} seconds")
+
+            # Check for game-over conditions based on elapsed time or other game events
+            if elapsed_time >= 300:  # Check if 5 minutes (300 seconds) elapsed
+                print("Game over due to time limit!")
+                break  # End the game or perform game-over actions
+
+            # Simulate gameplay delay
+            # Replace this with your actual game mechanics that would occur over time
+            # For demonstration purposes, this sleeps for 1 second in each loop iteration
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        timer.stop_timer()
+        print("Game stopped. Elapsed Time:", timer.get_elapsed_time(), "seconds")
+
+
 if __name__ == '__main__':
     main()
+    start_game()
