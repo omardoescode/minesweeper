@@ -1,4 +1,4 @@
 from screen import GUI
 
-game = GUI(30, 30, 15)
+game = GUI()
 game.start_game()
