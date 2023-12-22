@@ -1,4 +1,4 @@
-from helpers import validate_coordinates, every, flat, print_colored
+from helpers import validate_coordinates, every, flat, print_colored, validate_input
 from constants import COORDINATES_TRANSITIONS, VALUE_COLORS
 import random
 
@@ -57,36 +57,44 @@ class Game:
 
     # void -> int, int, 'c' or 'f'
     def handle_input(self):
-        is_valid_input = False
-        while not is_valid_input:
-            command = input("Command: ").lower().strip().split(" ")
-            option = "c"
+        # is_valid_input = False
+        # while not is_valid_input:
+        #     command = input("Command: ").lower().strip().split(" ")
+        #     option = "c"
 
-            # Check for the length of the command
-            if len(command) not in [2, 3]:
-                print("Invalid Command")
-                continue
+        #     # Check for the length of the command
+        #     if len(command) not in [2, 3]:
+        #         print("Invalid Command")
+        #         continue
 
-            # Check if rows, and columns are numbers
-            try:
-                row, column = map(lambda val: int(val) - 1, command[:2])
-                if not validate_coordinates(row, column, self.board_size):
-                    print("Invalid Coordinates")
-                    continue
+        #     # Check if rows, and columns are numbers
+        #     try:
+        #         row, column = map(lambda val: int(val) - 1, command[:2])
+        #         if not validate_coordinates(row, column, self.board_size):
+        #             print("Invalid Coordinates")
+        #             continue
 
-                if len(command) == 3:
-                    option = "f" if command[2] == "f" else "c"
+        #         if len(command) == 3:
+        #             option = "f" if command[2] == "f" else "c"
 
-                    if not self.start_playing:
-                        print("You cannot flag on the first move!")
-                        continue
+        #             if not self.start_playing:
+        #                 print("You cannot flag on the first move!")
+        #                 continue
 
-                is_valid_input = True
+        #         is_valid_input = True
 
-            except:
-                print("Invalid Command")
+        #     except:
+        #         print("Invalid Command")
+        rows, columns = self.board_size
+        row = validate_input(int, "Enter the row: ", lambda val: val in range(rows))
+        column = validate_input(
+            int, "Enter the column: ", lambda val: val in range(columns)
+        )
+        option = validate_input(
+            str, "click (c) or flag (g): ", lambda val: val == "c" or val == "f"
+        )
 
-            return row, column, option
+        return row, column, option
 
     # (int, int) -> void
     # click the current cell with the given row, and conlumn coordinates.
