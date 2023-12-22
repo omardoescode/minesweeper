@@ -72,7 +72,7 @@ def main():
     option = validate_input(
         str,
         "CLI or GUI? ",
-        lambda val: val.lower() == "cli" or val.lower() == "guiJKw;",
+        lambda val: val.lower() == "cli" or val.lower() == "gui",
     )
     match option:
         case "cli":
