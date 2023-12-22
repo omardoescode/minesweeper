@@ -22,7 +22,7 @@ class GUI:
         self.running = True
 
     def start_game(self):
-        current_page = MainMenu(self.screen, self.fonts)
+        current_page = MainMenu()
 
         while True:
             action, kwargs = current_page.handle_events()
@@ -32,24 +32,24 @@ class GUI:
                     pygame.quit()
                     sys.exit()
                 case "main_menu":
-                    current_page = MainMenu(self.screen, self.fonts)
+                    current_page = MainMenu()
                 case "difficulty":
-                    current_page = Difficulty(self.screen, self.fonts)
+                    current_page = Difficulty()
                 case "board":
                     current_page = Board(
-                        self.screen, self.fonts, kwargs["rows"], kwargs["columns"]
+                        kwargs["rows"],
+                        kwargs["columns"],
+                        kwargs["mines"],
                     )
-            current_page.update()
+            current_page.update(self.screen, self.fonts)
 
             pygame.display.flip()
             self.clock.tick(60)
 
 
 class MainMenu:
-    def __init__(self, screen, fonts):
+    def __init__(self):
         self.title_text = "Minesweeper Main Menu"
-        self.screen = screen
-        self.fonts = fonts
         self.navigation_buttons = []
         # {obj: button, val: "Navigation Button", kwargs}
 
@@ -63,17 +63,17 @@ class MainMenu:
                         return btn["val"], btn["kwargs"]
         return None, None
 
-    def draw_title(self):
-        text_surface = self.fonts["lg"].render("Minesweeper", True, (0, 0, 0))
+    def draw_title(self, screen, fonts):
+        text_surface = fonts["lg"].render("Minesweeper", True, (0, 0, 0))
         text_rect = text_surface.get_rect(
             center=(
                 WIDTH / 2,
                 HEIGHT / 3,
             )
         )
-        self.screen.blit(text_surface, text_rect.topleft)
+        screen.blit(text_surface, text_rect.topleft)
 
-    def draw_button(self, text, position, handle_click=lambda: None):
+    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
         return create_button(
             position[0] - 150,
             position[1] + 40,
@@ -83,34 +83,36 @@ class MainMenu:
             (255, 255, 255),
             PRIMARY_COLOR,
             (0, 0, 0),
-            self.screen,
-            self.fonts,
+            screen,
+            fonts,
             handle_click,
         )
 
-    def update(self):
+    def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        self.screen.fill(PRIMARY_COLOR)
+        screen.fill(PRIMARY_COLOR)
 
-        self.draw_title()
+        self.draw_title(screen, fonts)
 
-        game_start = self.draw_button("Game Start", (WIDTH // 2, HEIGHT // 3 + 40))
+        game_start = self.draw_button(
+            "Game Start", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
+        )
         self.navigation_buttons.append(
             {"obj": game_start, "val": "difficulty", "kwargs": None}
         )
         # TODO: Handle the options functionailty
-        self.draw_button("Options", (WIDTH // 2, HEIGHT // 3 + 160))
-        quit_button = self.draw_button("Quit", (WIDTH // 2, HEIGHT // 3 + 280))
+        self.draw_button("Options", (WIDTH // 2, HEIGHT // 3 + 160), screen, fonts)
+        quit_button = self.draw_button(
+            "Quit", (WIDTH // 2, HEIGHT // 3 + 280), screen, fonts
+        )
         self.navigation_buttons.append(
             {"obj": quit_button, "val": "quit_game", "kwargs": {}}
         )
 
 
 class Difficulty:
-    def __init__(self, screen, fonts):
+    def __init__(self):
         self.title_text = "Minesweeper: Choose the difficulty"
-        self.screen = screen
-        self.fonts = fonts
         self.navigation_buttons = []
 
     def handle_events(self):
@@ -124,17 +126,7 @@ class Difficulty:
                         return btn["val"], btn["kwargs"]
         return None, None
 
-    def draw_title(self):
-        text_surface = self.fonts["lg"].render("Choose the Difficulty", True, (0, 0, 0))
-        text_rect = text_surface.get_rect(
-            center=(
-                WIDTH / 2,
-                HEIGHT / 3 - 40,
-            )
-        )
-        self.screen.blit(text_surface, text_rect.topleft)
-
-    def draw_button(self, text, position, handle_click=lambda: None):
+    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
         return create_button(
             position[0] - 150,
             position[1] + 40,
@@ -144,18 +136,18 @@ class Difficulty:
             (255, 255, 255),
             PRIMARY_COLOR,
             (0, 0, 0),
-            self.screen,
-            self.fonts,
+            screen,
+            fonts,
             handle_click,
         )
 
-    def update(self):
+    def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        self.screen.fill(PRIMARY_COLOR)
+        screen.fill(PRIMARY_COLOR)
 
         y = HEIGHT // 5
         for dif in DIFFICULTIES.values():
-            btn = self.draw_button(dif.capitalize(), (WIDTH // 2, y))
+            btn = self.draw_button(dif.capitalize(), (WIDTH // 2, y), screen, fonts)
             self.navigation_buttons.append(
                 {
                     "obj": btn,
@@ -168,7 +160,7 @@ class Difficulty:
                 }
             )
             y += 120
-        go_back_button = self.draw_button("Back", (WIDTH // 2, y))
+        go_back_button = self.draw_button("Back", (WIDTH // 2, y), screen, fonts)
         self.navigation_buttons.append(
             {"obj": go_back_button, "val": "main_menu", "kwargs": {}}
         )
@@ -177,7 +169,6 @@ class Difficulty:
 class Cell:
     def __init__(
         self,
-        screen,
         handle_lose,
         handle_flag,
         handle_click,
@@ -194,7 +185,6 @@ class Cell:
         border_size,
     ):
         self.coordinates = coordinates
-        self.screen = screen
         self.cell_size = cell_size
         self.border_size = border_size
         self.value = value
@@ -229,21 +219,21 @@ class Cell:
 
         self.handle_flag(self.coordinates[1], self.coordinates[0])
 
-    def draw_cell(self):
-        pygame.draw.rect(self.screen, (0, 0, 0), self.rectangle)
+    def draw_cell(self, screen):
+        pygame.draw.rect(screen, (0, 0, 0), self.rectangle)
         if self.is_clicked:
-            self.screen.blit(self.uncovered_image, self.rectangle.topleft)
-            self.screen.blit(
+            screen.blit(self.uncovered_image, self.rectangle.topleft)
+            screen.blit(
                 self.value_image,
                 self.value_image.get_rect(center=self.rectangle.center),
             )
         elif self.is_flagged:
-            self.screen.blit(self.covered_image, self.rectangle.topleft)
-            self.screen.blit(
+            screen.blit(self.covered_image, self.rectangle.topleft)
+            screen.blit(
                 self.flag_image, self.flag_image.get_rect(center=self.rectangle.center)
             )
         else:
-            self.screen.blit(self.covered_image, self.rectangle.topleft)
+            screen.blit(self.covered_image, self.rectangle.topleft)
 
         is_hovered = self.rectangle.collidepoint(pygame.mouse.get_pos())
 
@@ -253,15 +243,13 @@ class Cell:
             elif pygame.mouse.get_pressed()[2]:
                 self.flag_cell()
             elif self.is_flagged == False:
-                self.screen.blit(self.hover_image, self.rectangle.topleft)
+                screen.blit(self.hover_image, self.rectangle.topleft)
 
 
 class Board(Game):
-    def __init__(self, screen, fonts, rows, columns, cell_size=40, border_size=1):
-        super().__init__(16, 16, 40)
+    def __init__(self, rows, columns, mines, cell_size=40, border_size=1):
+        super().__init__(rows, columns, mines)
         self.title_text = "board"
-        self.screen = screen
-        self.fonts = fonts
         self.rows = rows
         self.columns = columns
         self.cell_size = cell_size
@@ -301,20 +289,20 @@ class Board(Game):
                 )
             )
 
-    def draw_title(self, text):
-        text_surface = self.fonts["lg"].render(text, True, (0, 0, 0))
+    def draw_title(self, text, screen, fonts):
+        text_surface = fonts["lg"].render(text, True, (0, 0, 0))
         text_rect = text_surface.get_rect(
             center=(
                 self.width / 2,
                 self.height / 3,
             )
         )
-        self.screen.blit(text_surface, text_rect.topleft)
+        screen.blit(text_surface, text_rect.topleft)
 
-    def draw_cells(self):
+    def draw_cells(self, screen, fonts):
         if self.playing:
             if self.start_playing and self.check_win():
-                self.draw_title("YOu WON!")
+                self.draw_title("YOu WON!", screen, fonts)
             else:
                 for row_index in range(len(self.board)):
                     for column_index in range(len(self.board[row_index])):
@@ -330,7 +318,6 @@ class Board(Game):
                         else:
                             image = self.uncovered_image
                         cell = Cell(
-                            self.screen,
                             self.game_lose,
                             self.flag_cell,
                             self.click_cell,
@@ -346,9 +333,9 @@ class Board(Game):
                             self.cell_size,
                             self.border_size,
                         )
-                        cell.draw_cell()
+                        cell.draw_cell(screen)
         else:
-            self.draw_title("YOU LOST!")
+            self.draw_title("YOU LOST!", screen, fonts)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -359,9 +346,9 @@ class Board(Game):
                 pass
         return None, None
 
-    def update(self):
+    def update(self, screen, fonts):
         self.screen.fill(PRIMARY_COLOR)
-        self.draw_cells()
+        self.draw_cells(screen, fonts)
         pygame.display.set_caption("Enjoy!!!")
 
         # TODO
