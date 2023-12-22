@@ -15,14 +15,15 @@ class GUI:
             "xl": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 60),
             "lg": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 40),
             "md": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 20),
-            "sm": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 10),
+            "sm": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 15),
         }
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
+        self.username = None
 
     def start_game(self):
-        current_page = MainMenu()
+        current_page = PlayerNamePage()
 
         while True:
             action, kwargs = current_page.handle_events()
@@ -32,7 +33,9 @@ class GUI:
                     pygame.quit()
                     sys.exit()
                 case "main_menu":
-                    current_page = MainMenu()
+                    if kwargs and "name" in kwargs:
+                        self.username = kwargs["name"]
+                    current_page = MainMenu(self.username)
                 case "difficulty":
                     current_page = Difficulty()
                 case "board":
@@ -41,6 +44,8 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                     )
+                case "game_lose":
+                    current_page = MainMenu()
             current_page.update(self.screen, self.fonts)
 
             pygame.display.flip()
@@ -48,10 +53,10 @@ class GUI:
 
 
 class MainMenu:
-    def __init__(self):
+    def __init__(self, username):
         self.title_text = "Minesweeper Main Menu"
-        self.navigation_buttons = []
-        # {obj: button, val: "Navigation Button", kwargs}
+        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
+        self.username = username
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -63,12 +68,12 @@ class MainMenu:
                         return btn["val"], btn["kwargs"]
         return None, None
 
-    def draw_title(self, screen, fonts):
-        text_surface = fonts["lg"].render("Minesweeper", True, (0, 0, 0))
+    def draw_title(self, text, screen, font, x, y):
+        text_surface = font.render(text, True, (0, 0, 0))
         text_rect = text_surface.get_rect(
             center=(
-                WIDTH / 2,
-                HEIGHT / 3,
+                x,
+                y,
             )
         )
         screen.blit(text_surface, text_rect.topleft)
@@ -76,7 +81,7 @@ class MainMenu:
     def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
         return create_button(
             position[0] - 150,
-            position[1] + 40,
+            position[1] + 50,
             300,
             100,
             text,
@@ -92,7 +97,10 @@ class MainMenu:
         pygame.display.set_caption(self.title_text)
         screen.fill(PRIMARY_COLOR)
 
-        self.draw_title(screen, fonts)
+        self.draw_title("Minesweeper", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
+        self.draw_title(
+            f"Hello, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
+        )
 
         game_start = self.draw_button(
             "Game Start", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
@@ -301,49 +309,45 @@ class Board(Game):
 
     def draw_cells(self, screen, fonts):
         if self.playing:
-            if self.start_playing and self.check_win():
-                self.draw_title("YOu WON!", screen, fonts)
-            else:
-                for row_index in range(len(self.board)):
-                    for column_index in range(len(self.board[row_index])):
-                        cell_data = self.board[row_index][column_index]
-                        image = ""
-                        if cell_data.val != None:
-                            if cell_data.val == "M":
-                                image = self.mine_image
-                            elif cell_data.val == 0:
-                                image = self.uncovered_image
-                            else:
-                                image = self.value_images[cell_data.val - 1]
-                        else:
+            for row_index in range(len(self.board)):
+                for column_index in range(len(self.board[row_index])):
+                    cell_data = self.board[row_index][column_index]
+                    if cell_data.val != None:
+                        if cell_data.val == "M":
+                            image = self.mine_image
+                        elif cell_data.val == 0:
                             image = self.uncovered_image
-                        cell = Cell(
-                            self.game_lose,
-                            self.flag_cell,
-                            self.click_cell,
-                            (column_index, row_index),
-                            not cell_data.is_covered,
-                            cell_data.is_flagged,
-                            cell_data.val,
-                            self.covered_image,
-                            self.uncovered_image,
-                            self.hover_image,
-                            image,
-                            self.flag_image,
-                            self.cell_size,
-                            self.border_size,
-                        )
-                        cell.draw_cell(screen)
-        else:
-            self.draw_title("YOU LOST!", screen, fonts)
+                        else:
+                            image = self.value_images[cell_data.val - 1]
+                    else:
+                        image = self.uncovered_image
+                    cell = Cell(
+                        self.game_lose,
+                        self.flag_cell,
+                        self.click_cell,
+                        (column_index, row_index),
+                        not cell_data.is_covered,
+                        cell_data.is_flagged,
+                        cell_data.val,
+                        self.covered_image,
+                        self.uncovered_image,
+                        self.hover_image,
+                        image,
+                        self.flag_image,
+                        self.cell_size,
+                        self.border_size,
+                    )
+                    cell.draw_cell(screen)
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                pass
+        if self.start_playing and self.check_win():
+            return "game_win", None
+        if not self.playing:
+            return "game_lose", None
         return None, None
 
     def update(self, screen, fonts):
@@ -358,13 +362,11 @@ class Board(Game):
 # TODO
 # Create a page to ask for name
 class PlayerNamePage:
-    def __init__(self, screen, fonts):
+    def __init__(self):
         self.title_text = "Enter Your Name"
-        self.screen = screen
-        self.fonts = fonts
         self.submit_button = pygame.Rect(0, 0, 0, 0)
         self.text_input = ""
-        self.input_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 40)
+        self.input_rect = pygame.Rect(WIDTH // 2 - 200, HEIGHT // 2, 400, 50)
         self.active = False
 
     def handle_events(self):
@@ -375,7 +377,9 @@ class PlayerNamePage:
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.submit_button.collidepoint(event.pos):
                     if self.text_input:
-                        return "Board"  # Proceed to the game board
+                        return "main_menu", {
+                            "name": self.text_input
+                        }  # Proceed to the main menu
                 if self.input_rect.collidepoint(event.pos):
                     self.active = not self.active
                 else:
@@ -386,38 +390,45 @@ class PlayerNamePage:
                 if self.active:
                     if event.key == pygame.K_RETURN:
                         if self.text_input:
-                            return "Board"  # Proceed to the game board
+                            return (
+                                "main_menu",
+                                {"name": self.text_input},
+                            )  # Proceed to the game board
                     elif event.key == pygame.K_BACKSPACE:
                         self.text_input = self.text_input[:-1]
-                    else:
+                    elif (event.unicode.isalnum() or event.unicode.isspace()) and len(
+                        self.text_input
+                    ) < 18:
                         self.text_input += event.unicode
+        return None, None
 
-    def draw_input_box(self):
-        pygame.draw.rect(self.screen, (255, 255, 255), self.input_rect, 2)
-        text_surface = self.fonts["md"].render(self.text_input, True, (0, 0, 0))
-        self.screen.blit(text_surface, (self.input_rect.x + 5, self.input_rect.y + 5))
+    def draw_input_box(self, screen, fonts):
+        pygame.draw.rect(screen, (255, 255, 255), self.input_rect)
+        text_surface = fonts["md"].render(self.text_input, True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=self.input_rect.center)
+        screen.blit(text_surface, text_rect.topleft)
 
-    def draw_submit_button(self):
+    def draw_submit_button(self, screen, fonts):
         self.submit_button = create_button(
             WIDTH // 2,
             HEIGHT // 2 + 60,
-            100,
-            40,
+            200,
+            50,
             "Submit",
             (255, 255, 255),
             PRIMARY_COLOR,
             (0, 0, 0),
-            self.screen,
-            self.fonts,
+            screen,
+            fonts,
         )
 
-    def update(self):
+    def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        self.screen.fill(PRIMARY_COLOR)
+        screen.fill(PRIMARY_COLOR)
 
-        text_surface = self.fonts["lg"].render("Enter Your Name", True, (0, 0, 0))
+        text_surface = fonts["lg"].render("Enter Your Name", True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))
-        self.screen.blit(text_surface, text_rect.topleft)
+        screen.blit(text_surface, text_rect.topleft)
 
-        self.draw_input_box()
-        self.draw_submit_button()
+        self.draw_input_box(screen, fonts)
+        self.draw_submit_button(screen, fonts)
