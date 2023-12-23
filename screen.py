@@ -16,8 +16,8 @@ class GUI:
             "md": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 20),
             "sm": pygame.font.Font("assets/fonts/PressStart2P-Regular.ttf", 15),
         }
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.running = True
         self.username = None
 
@@ -45,7 +45,8 @@ class GUI:
                         cell_size=kwargs["cell_size"],
                     )
                 case "game_lose":
-                    current_page = GameLose(
+                    self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+                    current_page = GameOver(
                         self.username,
                         kwargs["rows"],
                         kwargs["columns"],
@@ -53,6 +54,7 @@ class GUI:
                         cell_size=kwargs["cell_size"],
                     )
                 case "game_win":
+                    self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     current_page = GameWin(
                         self.username,
                         kwargs["rows"],
@@ -323,6 +325,7 @@ class Board(Game):
         screen.blit(text_surface, text_rect.topleft)
 
     def draw_cells(self, screen, fonts):
+        self.draw_title("Hello", screen, fonts)
         if self.playing:
             for row_index in range(len(self.board)):
                 for column_index in range(len(self.board[row_index])):
@@ -454,7 +457,7 @@ class PlayerNamePage:
         self.draw_submit_button(screen, fonts)
 
 
-class GameLose:
+class GameOver:
     def __init__(self, username, rows, columns, mines, cell_size):
         self.title_text = "You Lost!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}

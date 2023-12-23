@@ -86,9 +86,10 @@ class Game:
         #     except:
         #         print("Invalid Command")
         rows, columns = self.board_size
-        row = validate_input(int, "Enter the row: ", lambda val: val in range(rows))
-        column = validate_input(
-            int, "Enter the column: ", lambda val: val in range(columns)
+        row = validate_input(int, "Enter the row: ", lambda val: val in range(rows)) - 1
+        column = (
+            validate_input(int, "Enter the column: ", lambda val: val in range(columns))
+            - 1
         )
         option = validate_input(
             str, "click (c) or flag (g): ", lambda val: val == "c" or val == "f"
