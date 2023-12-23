@@ -1,4 +1,4 @@
-from screen import GUI
+from GUI.screen import GUI
 from helpers import validate_input
 from classes import Game
 from constants import say_welcome, DIFFICULTIES, NUMBER_OF_MINES, BOARD_SIZE
