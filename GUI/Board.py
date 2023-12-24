@@ -9,6 +9,7 @@ class Cell:
         handle_lose,
         handle_flag,
         handle_click,
+        handle_chord,
         coordinates,
         is_clicked,
         is_flagged,
@@ -28,6 +29,7 @@ class Cell:
         self.handle_lose = handle_lose
         self.handle_flag = handle_flag
         self.handle_click = handle_click
+        self.handle_chord = handle_chord
         self.rectangle = pygame.Rect(
             self.border_size + self.cell_size * self.coordinates[0],
             self.border_size + self.cell_size * self.coordinates[1],
@@ -44,7 +46,7 @@ class Cell:
         self.flag_image = flag_image
 
     def reveal_cell(self):
-        self.handle_click(self.coordinates[1], self.coordinates[0])
+        self.handle_click(self.coordinates[0], self.coordinates[1])
 
         if self.value == "M":
             self.handle_lose()
@@ -54,7 +56,7 @@ class Cell:
     def flag_cell(self):
         self.is_flagged = True
 
-        self.handle_flag(self.coordinates[1], self.coordinates[0])
+        self.handle_flag(self.coordinates[0], self.coordinates[1])
 
     def draw_cell(self, screen):
         pygame.draw.rect(screen, (0, 0, 0), self.rectangle)
@@ -74,12 +76,15 @@ class Cell:
 
         is_hovered = self.rectangle.collidepoint(pygame.mouse.get_pos())
 
-        if is_hovered and self.is_clicked == False:
-            if pygame.mouse.get_pressed()[0]:
-                self.reveal_cell()
-            elif pygame.mouse.get_pressed()[2]:
-                self.flag_cell()
-            elif self.is_flagged == False:
+        if is_hovered:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.reveal_cell()
+                        self.handle_chord(self.coordinates[0], self.coordinates[1])
+                    elif event.button == 3 and not self.is_clicked:
+                        self.flag_cell()
+            if self.is_flagged == False and self.is_clicked == False:
                 screen.blit(self.hover_image, self.rectangle.topleft)
 
 
@@ -155,7 +160,8 @@ class Board(Game):
                         self.game_lose,
                         self.flag_cell,
                         self.click_cell,
-                        (column_index, row_index),
+                        self.chord,
+                        (row_index, column_index),
                         not cell_data.is_covered,
                         cell_data.is_flagged,
                         cell_data.val,
@@ -191,5 +197,5 @@ class Board(Game):
 
     def update(self, screen, fonts):
         screen.fill(PRIMARY_COLOR)
-        self.draw_cells(screen, fonts)
         pygame.display.set_caption("Enjoy!!!")
+        self.draw_cells(screen, fonts)

@@ -33,10 +33,9 @@ class Game:
             if cell.is_covered:
                 if option == "c":
                     self.click_cell(row, column)
+                    self.chord(row, column)
                 elif option == "f":
                     self.flag_cell(row, column)  # Either flag or unflag
-            elif self.check_chordable(cell.row, cell.column):
-                self.chord(cell.row, cell.column)
             else:
                 print("Cell already clicked!!")
 
@@ -107,7 +106,7 @@ class Game:
             for cell in neighbors:
                 row = cell.row
                 column = cell.column
-                if cell.is_covered:
+                if cell.is_covered and not cell.is_flagged:
                     match cell.val:
                         case 0:
                             cell.is_covered = False
@@ -193,13 +192,14 @@ class Game:
 
     # int, int -> void
     def chord(self, row, column):
-        neighboring_cells = self.neighboring_cells(row, column)
-        neighboring_cells_uncovered = filter(
-            lambda cell: cell.is_covered and not cell.is_flagged, neighboring_cells
-        )
+        if self.check_chordable(row, column):
+            neighboring_cells = self.neighboring_cells(row, column)
+            neighboring_cells_uncovered = filter(
+                lambda cell: cell.is_covered and not cell.is_flagged, neighboring_cells
+            )
 
-        for cell in neighboring_cells_uncovered:
-            self.click_cell(cell.row, cell.column)
+            for cell in neighboring_cells_uncovered:
+                self.click_cell(cell.row, cell.column)
 
     # (int, int) -> void
     # given the coordinates of the cell clicked first, create a board that must have the given cell with a non-mine value, then call click_cell to start the game
