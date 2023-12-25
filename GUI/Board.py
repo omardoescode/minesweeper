@@ -62,7 +62,8 @@ class Cell:
         pygame.draw.rect(screen, (0, 0, 0), self.rectangle)
         if self.is_clicked:
             screen.blit(self.uncovered_image, self.rectangle.topleft)
-            screen.blit(
+            if self.value != 0:
+                screen.blit(
                 self.value_image,
                 self.value_image.get_rect(center=self.rectangle.center),
             )
@@ -77,17 +78,9 @@ class Cell:
         is_hovered = self.rectangle.collidepoint(pygame.mouse.get_pos())
 
         if is_hovered:
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        self.reveal_cell()
-                        self.handle_chord(self.coordinates[0], self.coordinates[1])
-                    elif event.button == 3 and not self.is_clicked:
-                        self.flag_cell()
             if self.is_flagged == False and self.is_clicked == False:
                 screen.blit(self.hover_image, self.rectangle.topleft)
-
-
+                    
 class Board(Game):
     def __init__(self, rows, columns, mines, cell_size=40, border_size=1):
         super().__init__(rows, columns, mines)
@@ -98,6 +91,7 @@ class Board(Game):
         self.border_size = border_size
         self.width = columns * cell_size
         self.height = rows * cell_size
+        self.cells = []
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.covered_image = pygame.transform.scale(
             pygame.image.load("./assets/in_game_icons/board/covered-cell.png"),
@@ -173,12 +167,23 @@ class Board(Game):
                         self.cell_size,
                         self.border_size,
                     )
+                    self.cells.append(cell)
                     cell.draw_cell(screen)
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit_game", None
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                coords = pygame.mouse.get_pos()
+                row, column = coords[0]//self.cell_size, coords[1]//self.cell_size
+                cell = self.cells[row*self.rows + column]
+                if event.button == 1:
+                    cell.reveal_cell()
+                    cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
+                elif event.button == 3 and not cell.is_clicked:
+                    cell.flag_cell()
+
         if self.start_playing and self.check_win():
             return "game_win", {
                 "rows": self.rows,
