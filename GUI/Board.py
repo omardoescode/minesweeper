@@ -2,7 +2,7 @@ import pygame
 from classes import Game
 from GUI.gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
 from GUI.gui_helpers import calculate_cell_size, get_page_coordinates, create_button, started_playing
-from flag_counter import FlagCounter
+from GUI.flag_counter import FlagCounter
 from timer import Timer
 from GUI.scorer import Scorer
 
@@ -127,9 +127,8 @@ class Board(Game):
 
         # Initlaize the board given
         if board:
-            self.start_playing = started_playing(board)
-            if self.start_playing:
-                self.board = board
+            self.start_playing = True
+            self.board = board
 
         # Load the images of the cells
         self.covered_image = pygame.transform.scale(
@@ -243,7 +242,7 @@ class Board(Game):
         return create_button(
             position[0],
             position[1],
-            100,
+            120,
             50,
             text,
             (255, 255, 255),
@@ -261,26 +260,34 @@ class Board(Game):
 
             # Handle Pause Menu
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if not self.start_playing:
+                    state = "didn't_start"
+                elif self.playing:
+                    state = "playing"
+                else:
+                    state = "over"
                 if self.menu.collidepoint(event.pos):
-                    return "pause_menu", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board}
+                    return "pause_menu", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state}
 
             # Handle clicking on cells
             if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
                 coords = pygame.mouse.get_pos()
 
-                column, row = coords[0]//self.cell_size, (coords[1] - TOP_MARGIN)//self.cell_size
-                cell = self.cells[row*self.columns + column]
-                if event.button == 1:
-                    cell.reveal_cell()
-                    cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
+                # terminate the game, when clicking on the top margin
+                if coords[1] >= TOP_MARGIN:
+                    column, row = coords[0]//self.cell_size, (coords[1] - TOP_MARGIN)//self.cell_size
+                    cell = self.cells[row*self.columns + column]
+                    if event.button == 1:
+                        cell.reveal_cell()
+                        cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
 
-                    if (self.start_playing and self.check_win()) or (not self.playing):
-                        pygame.time.set_timer(pygame.USEREVENT+1, 250)
-                        self.stop_input = True
-                        self.timer.end()
+                        if (self.start_playing and self.check_win()) or (not self.playing):
+                            pygame.time.set_timer(pygame.USEREVENT+1, 250)
+                            self.stop_input = True
+                            self.timer.end()
 
-                elif event.button == 3 and not cell.is_clicked:
-                    cell.flag_cell()
+                    elif event.button == 3 and not cell.is_clicked:
+                        cell.flag_cell()
 
             if event.type == (pygame.USEREVENT+1):
                 uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.is_clicked == False, self.cells))

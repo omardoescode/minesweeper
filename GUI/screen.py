@@ -46,7 +46,8 @@ class GUI:
                         kwargs["rows"],
                         kwargs["columns"],
                         kwargs["mines"],
-                        kwargs["board"]
+                        kwargs["board"],
+                        kwargs["state"]
                     )
 
                 case "difficulty":
