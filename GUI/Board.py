@@ -1,10 +1,10 @@
 import pygame
 from classes import Game
-from gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
-from gui_helpers import calculate_cell_size, get_page_coordinates, create_button, started_playing
+from GUI.gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
+from GUI.gui_helpers import calculate_cell_size, get_page_coordinates, create_button, started_playing
 from flag_counter import FlagCounter
 from timer import Timer
-from scorer_display import Scorer
+from GUI.scorer import Scorer
 
 class GUICell:
     def __init__(
@@ -236,7 +236,7 @@ class Board(Game):
         flags = f"Flags: {self.flag_counter.get_remaining_flags()}"
         self.draw_item(screen, fonts["xs"], flags, 450 + 20, 40)
 
-        self.menu = self.draw_button("Menu", (10, 30), screen, fonts)
+        self.menu = self.draw_button("Pause", (10, 30), screen, fonts)
         
 
     def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):

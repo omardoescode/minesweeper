@@ -1,6 +1,6 @@
 import pygame
-from gui_constants import SECONDARY_COLOR, WIDTH, HEIGHT
-from gui_helpers import create_button
+from GUI.gui_constants import SECONDARY_COLOR, WIDTH, HEIGHT
+from GUI.gui_helpers import create_button
 
 
 class GameOver:

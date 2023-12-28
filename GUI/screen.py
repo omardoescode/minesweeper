@@ -1,6 +1,6 @@
 import pygame
 import sys
-from gui_constants import WIDTH, HEIGHT
+from GUI.gui_constants import WIDTH, HEIGHT
 from .Board import Board
 from .PlayerNamePage import PlayerNamePage
 from .Difficulty import Difficulty

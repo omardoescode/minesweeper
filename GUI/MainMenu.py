@@ -1,6 +1,6 @@
 import pygame
-from gui_helpers import create_button
-from gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
+from GUI.gui_helpers import create_button
+from GUI.gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
 
 
 class MainMenu:

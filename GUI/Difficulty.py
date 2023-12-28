@@ -1,6 +1,6 @@
 import pygame
-from gui_helpers import create_button
-from gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT, SECONDARY_COLOR
+from GUI.gui_helpers import create_button
+from GUI.gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT, SECONDARY_COLOR
 from constants import DIFFICULTIES, BOARD_SIZE, NUMBER_OF_MINES
 
 
