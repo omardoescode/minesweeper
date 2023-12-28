@@ -1,6 +1,6 @@
 import pygame
-from gui_helpers import create_button, calculate_cell_size
-from gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR
+from gui_helpers import create_button
+from gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
 
 
 class CustomDifficulty:
@@ -122,7 +122,7 @@ class CustomDifficulty:
             50,
             "Submit",
             (255, 255, 255),
-            PRIMARY_COLOR,
+            SECONDARY_COLOR,
             (0, 0, 0),
             screen,
             fonts,

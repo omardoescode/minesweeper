@@ -278,6 +278,17 @@ class Game:
 
         # Print Bottom Border
         print("----" * (columns + 1))
+    
+    # () -> int
+    # return the number of cells where is_covered=False and not a mine
+    def get_revealed_cells(self):
+        count = 0
+        
+        for cell in flat(self.board):
+            if cell.is_covered == False and cell.val != "M":
+                count += 1
+        
+        return count
 
 
 class Cell:

@@ -29,6 +29,10 @@ def every(func, lst):
         return True
     return func(lst[0]) and every(func, lst[1:])
 
+def some(func, lst):
+    if lst == []:
+        return False
+    return func(lst[0]) or some(func, lst[1:])
 def flat(lst):
     if not lst: # lst is empty
         return []

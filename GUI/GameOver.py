@@ -1,5 +1,5 @@
 import pygame
-from gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT
+from gui_constants import SECONDARY_COLOR, WIDTH, HEIGHT
 from gui_helpers import create_button
 
 
@@ -40,7 +40,7 @@ class GameOver:
             100,
             text,
             (255, 255, 255),
-            PRIMARY_COLOR,
+            SECONDARY_COLOR,
             (0, 0, 0),
             screen,
             fonts,

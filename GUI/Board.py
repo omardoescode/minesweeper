@@ -1,10 +1,12 @@
 import pygame
 from classes import Game
-from gui_constants import PRIMARY_COLOR
-from gui_helpers import calculate_cell_size
+from gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
+from gui_helpers import calculate_cell_size, get_page_coordinates, create_button, started_playing
+from flag_counter import FlagCounter
+from timer import Timer
+from scorer_display import Scorer
 
-
-class Cell:
+class GUICell:
     def __init__(
         self,
         handle_lose,
@@ -22,7 +24,8 @@ class Cell:
         flag_image,
         cell_size,
         border_size,
-        stop_input
+        stop_input,
+        flag_counter
     ):
         self.coordinates = coordinates
         self.cell_size = cell_size
@@ -34,7 +37,7 @@ class Cell:
         self.handle_chord = handle_chord
         self.rectangle = pygame.Rect(
             self.border_size + self.cell_size * self.coordinates[1],
-            self.border_size + self.cell_size * self.coordinates[0],
+            self.border_size + self.cell_size * self.coordinates[0] + TOP_MARGIN,
             self.cell_size,
             self.cell_size,
         )
@@ -47,6 +50,7 @@ class Cell:
         self.value_image = value_image
         self.flag_image = flag_image
         self.stop_input = stop_input
+        self.flag_counter = flag_counter
 
     def reveal_cell(self):
         self.handle_click(self.coordinates[0], self.coordinates[1])
@@ -58,7 +62,15 @@ class Cell:
         self.is_clicked = True
 
     def flag_cell(self):
-        self.is_flagged = True
+        self.is_flagged = not self.is_flagged
+
+        if self.is_flagged:
+            self.flag_counter.place_flag()
+        else:
+            self.flag_counter.remove_flag()
+
+        print(self.flag_counter.get_remaining_flags())
+        
 
         self.handle_flag(self.coordinates[0], self.coordinates[1])
 
@@ -80,7 +92,7 @@ class Cell:
             screen.blit(self.covered_image, self.rectangle.topleft)
 
         coords = pygame.mouse.get_pos()
-        column, row = coords[0]//self.cell_size, coords[1]//self.cell_size
+        column, row = coords[0]//self.cell_size, (coords[1]-TOP_MARGIN)//self.cell_size
 
         is_hovered = self.coordinates[0] == row and self.coordinates[1] == column
 
@@ -90,7 +102,7 @@ class Cell:
 
 
 class Board(Game):
-    def __init__(self, rows, columns, mines, border_size=1):
+    def __init__(self, rows, columns, mines, board=None, border_size=1):
         super().__init__(rows, columns, mines)
         self.title_text = "board"
         self.rows = rows
@@ -99,9 +111,27 @@ class Board(Game):
         self.border_size = border_size
         self.stop_input = False
         self.width = columns * self.cell_size
-        self.height = rows * self.cell_size
+        self.height = rows * self.cell_size + TOP_MARGIN
         self.cells = ['X']*(self.columns*self.rows)
         self.screen = pygame.display.set_mode((self.width, self.height))
+
+        # Initalize the timer
+        self.timer = Timer()
+        self.timer.start() # start the timer
+
+        # Initalize the flag counter
+        self.flag_counter = FlagCounter(self.mines)
+
+        # Initalize the score
+        self.scorer = Scorer()
+
+        # Initlaize the board given
+        if board:
+            self.start_playing = started_playing(board)
+            if self.start_playing:
+                self.board = board
+
+        # Load the images of the cells
         self.covered_image = pygame.transform.scale(
             pygame.image.load("./assets/in_game_icons/board/covered-cell.png"),
             (self.cell_size - self.border_size, self.cell_size - self.border_size),
@@ -137,18 +167,7 @@ class Board(Game):
     def handle_stop_input(self):
         self.stop_input = True
 
-    def draw_title(self, text, screen, fonts):
-        text_surface = fonts["lg"].render(text, True, (0, 0, 0))
-        text_rect = text_surface.get_rect(
-            center=(
-                self.width / 2,
-                self.height / 3,
-            )
-        )
-        screen.blit(text_surface, text_rect.topleft)
-
-    def draw_cells(self, screen, fonts):
-        self.draw_title("Hello", screen, fonts)
+    def draw_cells(self, screen):
         for row_index in range(len(self.board)):
             for column_index in range(len(self.board[row_index])):
                 cell_data = self.board[row_index][column_index]
@@ -161,7 +180,7 @@ class Board(Game):
                         image = self.value_images[cell_data.val - 1]
                 else:
                     image = self.uncovered_image
-                cell = Cell(
+                cell = GUICell(
                     self.game_lose,
                     self.flag_cell,
                     self.click_cell,
@@ -177,19 +196,79 @@ class Board(Game):
                     self.flag_image,
                     self.cell_size,
                     self.border_size,
-                    self.handle_stop_input
+                    self.handle_stop_input,
+                    self.flag_counter
                 )
                 self.cells[row_index*self.columns + column_index] = cell
                 cell.draw_cell(screen) 
+    
+    def draw_item(self, screen, font, text, x, y):
+        # Assuming screen is the Pygame surface
+        screen_width = screen.get_width()
 
+        # Adjust x to be relative to the right of the screen
+        x_relative_to_right = screen_width - x
+
+        bg_rect = pygame.Rect(x_relative_to_right, y, 150, 30)
+        pygame.draw.rect(screen, SECONDARY_COLOR, bg_rect)
+
+        text_surface = font.render(text, True, (0, 0, 0))
+        
+        # Adjust text_rect to be relative to the right of bg_rect
+        text_rect = text_surface.get_rect(center=bg_rect.center)
+
+        screen.blit(text_surface, text_rect.topleft)
+
+    def draw_topbar(self, screen, fonts):
+        width, _ = get_page_coordinates()
+
+        # TODO: Change the time and flag text to some icons to be placed with them
+        # TODO: change the font from xs to sm after implementing so
+        # Timer
+        time = f"Time: {self.timer.get_elapsed_time():.0f}s"
+        self.draw_item(screen, fonts["xs"], time, 150, 40)
+
+        # Score
+        score = f"Score: {self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time())} XP"
+        self.draw_item(screen, fonts["xs"], score, 300 + 10, 40)
+
+        # Flag Counter
+        flags = f"Flags: {self.flag_counter.get_remaining_flags()}"
+        self.draw_item(screen, fonts["xs"], flags, 450 + 20, 40)
+
+        self.menu = self.draw_button("Menu", (10, 30), screen, fonts)
+        
+
+    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
+        return create_button(
+            position[0],
+            position[1],
+            100,
+            50,
+            text,
+            (255, 255, 255),
+            SECONDARY_COLOR,
+            (0, 0, 0),
+            screen,
+            fonts,
+            handle_click,
+        )
+        
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit_game", None
-            
-            if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input :
+
+            # Handle Pause Menu
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.menu.collidepoint(event.pos):
+                    return "pause_menu", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board}
+
+            # Handle clicking on cells
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
                 coords = pygame.mouse.get_pos()
-                column, row = coords[0]//self.cell_size, coords[1]//self.cell_size
+
+                column, row = coords[0]//self.cell_size, (coords[1] - TOP_MARGIN)//self.cell_size
                 cell = self.cells[row*self.columns + column]
                 if event.button == 1:
                     cell.reveal_cell()
@@ -198,6 +277,7 @@ class Board(Game):
                     if (self.start_playing and self.check_win()) or (not self.playing):
                         pygame.time.set_timer(pygame.USEREVENT+1, 250)
                         self.stop_input = True
+                        self.timer.end()
 
                 elif event.button == 3 and not cell.is_clicked:
                     cell.flag_cell()
@@ -238,4 +318,5 @@ class Board(Game):
     def update(self, screen, fonts):
         screen.fill(PRIMARY_COLOR)
         pygame.display.set_caption("Enjoy!!!")
-        self.draw_cells(screen, fonts)
+        self.draw_topbar(screen, fonts)
+        self.draw_cells(screen)

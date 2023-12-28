@@ -1,6 +1,6 @@
 import pygame
 from gui_helpers import create_button
-from gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT
+from gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT, SECONDARY_COLOR
 from constants import DIFFICULTIES, BOARD_SIZE, NUMBER_OF_MINES
 
 
@@ -28,7 +28,7 @@ class Difficulty:
             100,
             text,
             (255, 255, 255),
-            PRIMARY_COLOR,
+            SECONDARY_COLOR,
             (0, 0, 0),
             screen,
             fonts,

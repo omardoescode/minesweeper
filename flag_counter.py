@@ -4,8 +4,7 @@ class FlagCounter:
         self.used_flags = 0
 
     def place_flag(self):
-        if self.used_flags < self.total_flags:
-            self.used_flags += 1
+        self.used_flags += 1
 
     def remove_flag(self):
         if self.used_flags > 0:

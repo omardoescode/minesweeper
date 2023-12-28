@@ -1,5 +1,5 @@
 import pygame
-
+from helpers import every, flat
 
 def create_button(
     x,
@@ -36,6 +36,13 @@ def calc_initial_mine_reveal_time(num_mines):
     pass
 
 def calculate_cell_size(rows, columns):
+    width, height = get_page_coordinates()
+
+    # formula for cell_size
+    return min(width // columns, height // rows)
+
+def get_page_coordinates():
+
     # Get the display information
     display_info = pygame.display.Info()
 
@@ -43,5 +50,9 @@ def calculate_cell_size(rows, columns):
     screen_width = display_info.current_w
     screen_height = display_info.current_h
 
-    # formula for cell_size
-    return min(screen_width // columns, screen_height // rows)
+    return screen_width, screen_height
+
+# (listof Cell) -> bool
+# return false, if at least one of the cells is uncovered
+def started_playing(board):
+    return not every(lambda cell: cell.is_covered, flat(board))
