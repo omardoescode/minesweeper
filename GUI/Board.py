@@ -21,6 +21,7 @@ class Cell:
         flag_image,
         cell_size,
         border_size,
+        stop_input
     ):
         self.coordinates = coordinates
         self.cell_size = cell_size
@@ -31,8 +32,8 @@ class Cell:
         self.handle_click = handle_click
         self.handle_chord = handle_chord
         self.rectangle = pygame.Rect(
-            self.border_size + self.cell_size * self.coordinates[0],
             self.border_size + self.cell_size * self.coordinates[1],
+            self.border_size + self.cell_size * self.coordinates[0],
             self.cell_size,
             self.cell_size,
         )
@@ -44,12 +45,14 @@ class Cell:
         self.hover_image = hover_image
         self.value_image = value_image
         self.flag_image = flag_image
+        self.stop_input = stop_input
 
     def reveal_cell(self):
         self.handle_click(self.coordinates[0], self.coordinates[1])
-
+        
         if self.value == "M":
-            self.handle_lose()
+            self.stop_input()
+            pygame.time.set_timer(pygame.USEREVENT + 1, 250)
 
         self.is_clicked = True
 
@@ -75,7 +78,10 @@ class Cell:
         else:
             screen.blit(self.covered_image, self.rectangle.topleft)
 
-        is_hovered = self.rectangle.collidepoint(pygame.mouse.get_pos())
+        coords = pygame.mouse.get_pos()
+        column, row = coords[0]//self.cell_size, coords[1]//self.cell_size
+
+        is_hovered = self.coordinates[0] == row and self.coordinates[1] == column
 
         if is_hovered:
             if self.is_flagged == False and self.is_clicked == False:
@@ -91,7 +97,8 @@ class Board(Game):
         self.border_size = border_size
         self.width = columns * cell_size
         self.height = rows * cell_size
-        self.cells = []
+        self.stop_input = False
+        self.cells = ['X']*(self.columns*self.rows)
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.covered_image = pygame.transform.scale(
             pygame.image.load("./assets/in_game_icons/board/covered-cell.png"),
@@ -125,6 +132,9 @@ class Board(Game):
                 )
             )
 
+    def handle_stop_input(self):
+        self.stop_input = True
+
     def draw_title(self, text, screen, fonts):
         text_surface = fonts["lg"].render(text, True, (0, 0, 0))
         text_rect = text_surface.get_rect(
@@ -137,67 +147,90 @@ class Board(Game):
 
     def draw_cells(self, screen, fonts):
         self.draw_title("Hello", screen, fonts)
-        if self.playing:
-            for row_index in range(len(self.board)):
-                for column_index in range(len(self.board[row_index])):
-                    cell_data = self.board[row_index][column_index]
-                    if cell_data.val != None:
-                        if cell_data.val == "M":
-                            image = self.mine_image
-                        elif cell_data.val == 0:
-                            image = self.uncovered_image
-                        else:
-                            image = self.value_images[cell_data.val - 1]
-                    else:
+        for row_index in range(len(self.board)):
+            for column_index in range(len(self.board[row_index])):
+                cell_data = self.board[row_index][column_index]
+                if cell_data.val != None:
+                    if cell_data.val == "M":
+                        image = self.mine_image
+                    elif cell_data.val == 0:
                         image = self.uncovered_image
-                    cell = Cell(
-                        self.game_lose,
-                        self.flag_cell,
-                        self.click_cell,
-                        self.chord,
-                        (row_index, column_index),
-                        not cell_data.is_covered,
-                        cell_data.is_flagged,
-                        cell_data.val,
-                        self.covered_image,
-                        self.uncovered_image,
-                        self.hover_image,
-                        image,
-                        self.flag_image,
-                        self.cell_size,
-                        self.border_size,
-                    )
-                    self.cells.append(cell)
-                    cell.draw_cell(screen)
+                    else:
+                        image = self.value_images[cell_data.val - 1]
+                else:
+                    image = self.uncovered_image
+                cell = Cell(
+                    self.game_lose,
+                    self.flag_cell,
+                    self.click_cell,
+                    self.chord,
+                    (row_index, column_index),
+                    not cell_data.is_covered,
+                    cell_data.is_flagged,
+                    cell_data.val,
+                    self.covered_image,
+                    self.uncovered_image,
+                    self.hover_image,
+                    image,
+                    self.flag_image,
+                    self.cell_size,
+                    self.border_size,
+                    self.handle_stop_input
+                )
+                self.cells[row_index*self.columns + column_index] = cell
+                cell.draw_cell(screen) 
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit_game", None
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input :
                 coords = pygame.mouse.get_pos()
-                row, column = coords[0]//self.cell_size, coords[1]//self.cell_size
-                cell = self.cells[row*self.rows + column]
+                column, row = coords[0]//self.cell_size, coords[1]//self.cell_size
+                cell = self.cells[row*self.columns + column]
                 if event.button == 1:
                     cell.reveal_cell()
                     cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
+
+                    if (self.start_playing and self.check_win()) or (not self.playing):
+                        pygame.time.set_timer(pygame.USEREVENT+1, 250)
+                        self.stop_input = True
+
                 elif event.button == 3 and not cell.is_clicked:
                     cell.flag_cell()
 
-        if self.start_playing and self.check_win():
-            return "game_win", {
-                "rows": self.rows,
-                "columns": self.columns,
-                "mines": self.mines,
-                "cell_size": self.cell_size,
-            }
-        if not self.playing:
-            return "game_lose", {
-                "rows": self.rows,
-                "columns": self.columns,
-                "mines": self.mines,
-                "cell_size": self.cell_size,
-            }
+            if event.type == (pygame.USEREVENT+1):
+                uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.is_clicked == False, self.cells))
+                if len(uncovered_mines) > 0:
+                    next_mine = uncovered_mines[0]
+                    row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
+                    self.board[row_index][column_index].is_flagged = False
+                    self.board[row_index][column_index].is_covered = False
+                    pygame.time.set_timer(pygame.USEREVENT + 1, int(250*(len(uncovered_mines)/self.mines)))
+                else:
+                    pygame.time.set_timer(pygame.USEREVENT+1, 0)
+                    pygame.time.set_timer(pygame.USEREVENT+2, 1500)
+
+            if event.type == pygame.USEREVENT + 2:
+                pygame.time.set_timer(pygame.USEREVENT+2, 0)
+
+                if self.start_playing and self.check_win():
+                    return "game_win", {
+                        "rows": self.rows,
+                        "columns": self.columns,
+                        "mines": self.mines,
+                        "cell_size": self.cell_size,
+                    }
+
+                if not self.playing:
+                    return "game_lose", {
+                        "rows": self.rows,
+                        "columns": self.columns,
+                        "mines": self.mines,
+                        "cell_size": self.cell_size,
+                    }
+            
         return None, None
 
     def update(self, screen, fonts):

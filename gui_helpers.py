@@ -30,3 +30,7 @@ def create_button(
         handle_click()
 
     return button_rect
+
+
+def calc_initial_mine_reveal_time(num_mines):
+    pass
