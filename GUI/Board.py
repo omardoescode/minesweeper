@@ -1,6 +1,7 @@
 import pygame
 from classes import Game
 from gui_constants import PRIMARY_COLOR
+from gui_helpers import calculate_cell_size
 
 
 class Cell:
@@ -83,15 +84,15 @@ class Cell:
 
 
 class Board(Game):
-    def __init__(self, rows, columns, mines, cell_size=40, border_size=1):
+    def __init__(self, rows, columns, mines, border_size=1):
         super().__init__(rows, columns, mines)
         self.title_text = "board"
         self.rows = rows
         self.columns = columns
-        self.cell_size = cell_size
+        self.cell_size = calculate_cell_size(rows, columns)
         self.border_size = border_size
-        self.width = columns * cell_size
-        self.height = rows * cell_size
+        self.width = columns * self.cell_size
+        self.height = rows * self.cell_size
         self.cells = []
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.covered_image = pygame.transform.scale(

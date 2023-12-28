@@ -53,12 +53,7 @@ class CustomDifficulty:
                                 break
                             values[input["label"]] = int(value)
                     else:
-                        return "board", {
-                            **values,
-                            "cell_size": calculate_cell_size(
-                                values["rows"], values["columns"]
-                            ),
-                        }
+                        return "board", values
 
                 for input in self.inputs:
                     # Make it active

@@ -26,7 +26,7 @@ class GUI:
         self.username = None
 
     def start_game(self):
-        current_page = CustomDifficulty()
+        current_page = PlayerNamePage()
 
         while True:
             action, kwargs = current_page.handle_events()
@@ -49,7 +49,6 @@ class GUI:
                         kwargs["rows"],
                         kwargs["columns"],
                         kwargs["mines"],
-                        cell_size=kwargs["cell_size"],
                     )
                 case "game_lose":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -58,7 +57,6 @@ class GUI:
                         kwargs["rows"],
                         kwargs["columns"],
                         kwargs["mines"],
-                        cell_size=kwargs["cell_size"],
                     )
                 case "game_win":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -67,7 +65,6 @@ class GUI:
                         kwargs["rows"],
                         kwargs["columns"],
                         kwargs["mines"],
-                        cell_size=kwargs["cell_size"],
                     )
             current_page.update(self.screen, self.fonts)
 

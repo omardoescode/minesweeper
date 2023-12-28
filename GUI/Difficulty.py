@@ -1,6 +1,6 @@
 import pygame
 from gui_helpers import create_button
-from gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT, DIFFICULTIES_CELLS_SIZES
+from gui_constants import PRIMARY_COLOR, WIDTH, HEIGHT
 from constants import DIFFICULTIES, BOARD_SIZE, NUMBER_OF_MINES
 
 
@@ -50,7 +50,6 @@ class Difficulty:
                         "rows": BOARD_SIZE[dif][0],
                         "columns": BOARD_SIZE[dif][1],
                         "mines": NUMBER_OF_MINES[dif],
-                        "cell_size": DIFFICULTIES_CELLS_SIZES[dif],
                     },
                 }
             )
