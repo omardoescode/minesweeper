@@ -7,6 +7,7 @@ from GUI.Difficulty import Difficulty
 from GUI.MainMenu import MainMenu
 from GUI.GameOver import GameOver
 from GUI.GameWin import GameWin
+from GUI.CustomDifficulty import CustomDifficulty
 
 
 class GUI:
@@ -25,7 +26,7 @@ class GUI:
         self.username = None
 
     def start_game(self):
-        current_page = PlayerNamePage()
+        current_page = CustomDifficulty()
 
         while True:
             action, kwargs = current_page.handle_events()
@@ -40,6 +41,8 @@ class GUI:
                     current_page = MainMenu(self.username)
                 case "difficulty":
                     current_page = Difficulty()
+                case "custom_difficulty":
+                    current_page = CustomDifficulty()
                 case "board":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     current_page = Board(

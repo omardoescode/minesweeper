@@ -30,3 +30,15 @@ def create_button(
         handle_click()
 
     return button_rect
+
+
+def calculate_cell_size(rows, columns):
+    # Get the display information
+    display_info = pygame.display.Info()
+
+    # Get the screen width and height
+    screen_width = display_info.current_w
+    screen_height = display_info.current_h
+
+    # formula for cell_size
+    return min(screen_width // columns, screen_height // rows)

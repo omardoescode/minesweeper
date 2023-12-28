@@ -8,6 +8,7 @@ class Difficulty:
     def __init__(self):
         self.title_text = "Minesweeper: Choose the difficulty"
         self.navigation_buttons = []
+        self.vertical_placement = HEIGHT // 5
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -22,7 +23,7 @@ class Difficulty:
     def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
         return create_button(
             position[0] - 150,
-            position[1] + 40,
+            position[1],
             300,
             100,
             text,
@@ -38,7 +39,7 @@ class Difficulty:
         pygame.display.set_caption(self.title_text)
         screen.fill(PRIMARY_COLOR)
 
-        y = HEIGHT // 5
+        y = 100
         for dif in DIFFICULTIES.values():
             btn = self.draw_button(dif.capitalize(), (WIDTH // 2, y), screen, fonts)
             self.navigation_buttons.append(
@@ -54,7 +55,13 @@ class Difficulty:
                 }
             )
             y += 120
-        go_back_button = self.draw_button("Back", (WIDTH // 2, y), screen, fonts)
+        custom_difficulty_button = self.draw_button(
+            "Custom", (WIDTH // 2, y), screen, fonts
+        )
+        self.navigation_buttons.append(
+            {"obj": custom_difficulty_button, "val": "custom_difficulty", "kwargs": {}}
+        )
+        go_back_button = self.draw_button("Back", (WIDTH // 2, y + 120), screen, fonts)
         self.navigation_buttons.append(
             {"obj": go_back_button, "val": "main_menu", "kwargs": {}}
         )
