@@ -1,6 +1,7 @@
 import pygame
 from classes import Game
 from gui_constants import PRIMARY_COLOR
+from gui_helpers import calculate_cell_size
 
 
 class Cell:
@@ -67,9 +68,9 @@ class Cell:
             screen.blit(self.uncovered_image, self.rectangle.topleft)
             if self.value != 0:
                 screen.blit(
-                self.value_image,
-                self.value_image.get_rect(center=self.rectangle.center),
-            )
+                    self.value_image,
+                    self.value_image.get_rect(center=self.rectangle.center),
+                )
         elif self.is_flagged:
             screen.blit(self.covered_image, self.rectangle.topleft)
             screen.blit(
@@ -86,18 +87,19 @@ class Cell:
         if is_hovered:
             if self.is_flagged == False and self.is_clicked == False:
                 screen.blit(self.hover_image, self.rectangle.topleft)
-                    
+
+
 class Board(Game):
-    def __init__(self, rows, columns, mines, cell_size=40, border_size=1):
+    def __init__(self, rows, columns, mines, border_size=1):
         super().__init__(rows, columns, mines)
         self.title_text = "board"
         self.rows = rows
         self.columns = columns
-        self.cell_size = cell_size
+        self.cell_size = calculate_cell_size(rows, columns)
         self.border_size = border_size
-        self.width = columns * cell_size
-        self.height = rows * cell_size
         self.stop_input = False
+        self.width = columns * self.cell_size
+        self.height = rows * self.cell_size
         self.cells = ['X']*(self.columns*self.rows)
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.covered_image = pygame.transform.scale(

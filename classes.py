@@ -1,6 +1,7 @@
 from helpers import validate_coordinates, every, flat, print_colored, validate_input
 from constants import COORDINATES_TRANSITIONS, VALUE_COLORS
 import random
+from flag_counter import FlagCounter
 
 
 class Game:
