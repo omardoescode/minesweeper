@@ -1,6 +1,7 @@
 from helpers import validate_coordinates, every, flat, print_colored, validate_input
 from constants import COORDINATES_TRANSITIONS, VALUE_COLORS
 import random
+from flag_counter import FlagCounter
 
 
 class Game:
@@ -299,3 +300,25 @@ class Cell:
         if self.is_covered or self.val is None:
             return "X"
         return str(self.val)
+
+
+class Game:
+    def __init__(self, rows, columns, mines):
+        self.board_size = (rows, columns)
+        self.mines = mines
+        self.board = []  # Existing board initialization
+        self.playing = True
+        self.start_playing = False
+        self.flag_counter = FlagCounter(total_flags=self.mines)  # Initialize FlagCounter
+
+
+    def place_flag(self):
+        if self.flag_counter.can_place_flag():
+            self.flag_counter.place_flag()
+
+    def remove_flag(self):
+        if self.flag_counter.flags_used > 0:
+            self.flag_counter.remove_flag()
+
+    def get_remaining_flags(self):
+        return self.flag_counter.get_remaining_flags()
