@@ -3,7 +3,9 @@ import pygame
 class PauseMenu:
     def __init__(self, rows, columns, mines, board, state):
         if state == "over":
-            self.buttons = []
+            self.buttons = [
+                {"text": "Restart", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines}}
+            ]
         elif state == "didn't_start":
             self.buttons = [
                 {"text": "Continue", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines}}

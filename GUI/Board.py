@@ -69,9 +69,6 @@ class GUICell:
         else:
             self.flag_counter.remove_flag()
 
-        print(self.flag_counter.get_remaining_flags())
-        
-
         self.handle_flag(self.coordinates[0], self.coordinates[1])
 
     def draw_cell(self, screen):
@@ -153,6 +150,16 @@ class Board(Game):
         )
         self.value_images = []
 
+        # Load the images of the sidebar
+        self.TB_flag_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/board/red-flag.png"),
+            (30, 30),
+        )
+
+        self.TB_timer_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/clock.png"),
+            (30, 30),
+        )
         for i in range(8):
             self.value_images.append(
                 pygame.transform.scale(
@@ -201,7 +208,7 @@ class Board(Game):
                 self.cells[row_index*self.columns + column_index] = cell
                 cell.draw_cell(screen) 
     
-    def draw_item(self, screen, font, text, x, y):
+    def draw_item(self, screen, font, text, x, y, icon=None):
         # Assuming screen is the Pygame surface
         screen_width = screen.get_width()
 
@@ -218,22 +225,24 @@ class Board(Game):
 
         screen.blit(text_surface, text_rect.topleft)
 
-    def draw_topbar(self, screen, fonts):
-        width, _ = get_page_coordinates()
+        # Adding the icon
+        if icon:
+            screen.blit(icon, bg_rect.topleft)
 
+    def draw_topbar(self, screen, fonts):
         # TODO: Change the time and flag text to some icons to be placed with them
         # TODO: change the font from xs to sm after implementing so
         # Timer
-        time = f"Time: {self.timer.get_elapsed_time():.0f}s"
-        self.draw_item(screen, fonts["xs"], time, 150, 40)
+        time = f"{self.timer.get_elapsed_time():.0f}s"
+        self.draw_item(screen, fonts["sm"], time, 150, 40, self.TB_timer_image)
 
         # Score
         score = f"Score: {self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time())} XP"
         self.draw_item(screen, fonts["xs"], score, 300 + 10, 40)
 
         # Flag Counter
-        flags = f"Flags: {self.flag_counter.get_remaining_flags()}"
-        self.draw_item(screen, fonts["xs"], flags, 450 + 20, 40)
+        flags = f"{self.flag_counter.get_remaining_flags()}"
+        self.draw_item(screen, fonts["sm"], flags, 450 + 20, 40, self.TB_flag_image)
 
         self.menu = self.draw_button("Pause", (10, 30), screen, fonts)
         
@@ -277,14 +286,14 @@ class Board(Game):
                 if coords[1] >= TOP_MARGIN:
                     column, row = coords[0]//self.cell_size, (coords[1] - TOP_MARGIN)//self.cell_size
                     cell = self.cells[row*self.columns + column]
-                    if event.button == 1:
-                        cell.reveal_cell()
-                        cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
+                    if event.button == 1 and not cell.is_flagged:
+                            cell.reveal_cell()
+                            cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
 
-                        if (self.start_playing and self.check_win()) or (not self.playing):
-                            pygame.time.set_timer(pygame.USEREVENT+1, 250)
-                            self.stop_input = True
-                            self.timer.end()
+                            if (self.start_playing and self.check_win()) or (not self.playing):
+                                pygame.time.set_timer(pygame.USEREVENT+1, 250)
+                                self.stop_input = True
+                                self.timer.end()
 
                     elif event.button == 3 and not cell.is_clicked:
                         cell.flag_cell()
