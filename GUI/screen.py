@@ -70,6 +70,7 @@ class GUI:
                         kwargs["mines"],
                         board=board
                     )
+                    self.music_player.play_board_music()
 
                 case "GAME_LOSE":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -79,6 +80,7 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                     )
+                    self.music_player.play_losing_music()
                 case "GAME_WIN":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     current_page = GameWin(
@@ -87,6 +89,7 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                     )
+                    self.music_player.play_winning_music()
                 case "CREDITS":
                     current_page = CreditsPage()
             current_page.update(self.screen, self.fonts)
