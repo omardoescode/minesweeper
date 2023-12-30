@@ -10,6 +10,7 @@ from .GameWin import GameWin
 from .CustomDifficulty import CustomDifficulty
 from .PauseMenu import PauseMenu
 from .CreditsPage import CreditsPage
+from .MusicPlayer import MusicPlayer
 
 class GUI:
     def __init__(self):
@@ -26,10 +27,11 @@ class GUI:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.running = True
         self.username = None
+        self.music_player = MusicPlayer()
 
     def start_game(self):
         current_page = PlayerNamePage()
-
+        self.music_player.play_default_music()
         while True:
             action, kwargs = current_page.handle_events()
 

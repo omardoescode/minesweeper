@@ -31,21 +31,18 @@ class Game:
                     "f"  # change the flagged value to c if the it's already flagged
                 )
 
-            if cell.is_covered:
-                if option == "c":
-                    self.click_cell(row, column)
-                    self.chord(row, column)
-                elif option == "f":
-                    self.flag_cell(row, column)  # Either flag or unflag
-            else:
-                print("Cell already clicked!!")
+            if option == "c":
+                self.click_cell(row, column)
+                self.chord(row, column)
+            elif option == "f":
+                self.flag_cell(row, column)  # Either flag or unflag
 
     # void -> boolean
     # return true if all the cells that have numbers have been uncovered
     def check_win(self):
         def check_cell(cell):
             return (
-                type(cell.val) == int and not cell.is_covered or type(cell.val) != int
+                (type(cell.val) == int and not cell.is_covered) or type(cell.val) != int
             )
 
         return every(check_cell, flat(self.board))
@@ -57,44 +54,34 @@ class Game:
 
     # void -> int, int, 'c' or 'f'
     def handle_input(self):
-        # is_valid_input = False
-        # while not is_valid_input:
-        #     command = input("Command: ").lower().strip().split(" ")
-        #     option = "c"
+        is_valid_input = False
+        while not is_valid_input:
+            command = input("Command: ").lower().strip().split(" ")
+            option = "c"
 
-        #     # Check for the length of the command
-        #     if len(command) not in [2, 3]:
-        #         print("Invalid Command")
-        #         continue
+            # Check for the length of the command
+            if len(command) not in [2, 3]:
+                print("Invalid Command")
+                continue
 
-        #     # Check if rows, and columns are numbers
-        #     try:
-        #         row, column = map(lambda val: int(val) - 1, command[:2])
-        #         if not validate_coordinates(row, column, self.board_size):
-        #             print("Invalid Coordinates")
-        #             continue
+            # Check if rows, and columns are numbers
+            try:
+                row, column = map(lambda val: int(val) - 1, command[:2])
+                if not validate_coordinates(row, column, self.board_size):
+                    print("Invalid Coordinates")
+                    continue
 
-        #         if len(command) == 3:
-        #             option = "f" if command[2] == "f" else "c"
+                if len(command) == 3:
+                    option = "f" if command[2] == "f" else "c"
 
-        #             if not self.start_playing:
-        #                 print("You cannot flag on the first move!")
-        #                 continue
+                    if not self.start_playing:
+                        print("You cannot flag on the first move!")
+                        continue
 
-        #         is_valid_input = True
+                is_valid_input = True
 
-        #     except:
-        #         print("Invalid Command")
-        rows, columns = self.board_size
-        row = validate_input(int, "Enter the row: ", lambda val: val in range(rows)) - 1
-        column = (
-            validate_input(int, "Enter the column: ", lambda val: val in range(columns))
-            - 1
-        )
-        option = validate_input(
-            str, "click (c) or flag (g): ", lambda val: val == "c" or val == "f"
-        )
-
+            except:
+                print("Invalid Command")
         return row, column, option
 
     # (int, int) -> void
