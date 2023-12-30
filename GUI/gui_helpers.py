@@ -13,6 +13,7 @@ def create_button(
     screen,
     fonts,
     handle_click=lambda: None,
+    text_size="md"
 ):
     button_rect = pygame.Rect(x, y, width, height)
 
@@ -21,7 +22,7 @@ def create_button(
     button_color = hover_color if is_hovered else normal_color
 
     pygame.draw.rect(screen, button_color, button_rect)
-    text_surface = fonts["md"].render(text, True, text_color)
+    text_surface = fonts[text_size].render(text, True, text_color)
     text_rect = text_surface.get_rect(center=button_rect.center)
 
     screen.blit(text_surface, text_rect.topleft)

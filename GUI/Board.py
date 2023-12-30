@@ -127,6 +127,9 @@ class Board(Game):
             self.start_playing = True
             self.board = board
 
+        # Load the background
+        self.background = pygame.image.load('./assets/background.png')
+
         # Load the images of the cells
         self.covered_image = pygame.transform.scale(
             pygame.image.load("./assets/in_game_icons/board/covered-cell.png"),
@@ -332,7 +335,7 @@ class Board(Game):
         return None, None
 
     def update(self, screen, fonts):
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.background, (0, 0))
         pygame.display.set_caption("Enjoy!!!")
         self.draw_topbar(screen, fonts)
         self.draw_cells(screen)

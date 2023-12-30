@@ -9,6 +9,7 @@ class Difficulty:
         self.title_text = "Minesweeper: Choose the difficulty"
         self.navigation_buttons = []
         self.vertical_placement = HEIGHT // 5
+        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -37,7 +38,7 @@ class Difficulty:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.bacground, (0, 0))
 
         y = 100
         for dif in DIFFICULTIES.values():

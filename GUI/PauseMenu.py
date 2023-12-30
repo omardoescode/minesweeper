@@ -4,7 +4,6 @@ class PauseMenu:
     def __init__(self, rows, columns, mines, board, state):
         if state == "over":
             self.buttons = [
-                {"text": "Restart", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines}}
             ]
         elif state == "didn't_start":
             self.buttons = [
@@ -15,6 +14,7 @@ class PauseMenu:
                 {"text": "Continue", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines, "board": board}}
             ]
         self.buttons +=[
+            {"text": "Restart", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines}},
             {"text": "Main Menu", "action": "main_menu", "kwargs": None},
             {"text": "Quit", "action": "quit_game", "kwargs": None},
         ]

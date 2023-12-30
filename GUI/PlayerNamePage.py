@@ -10,6 +10,7 @@ class PlayerNamePage:
         self.text_input = ""
         self.input_rect = pygame.Rect(WIDTH // 2 - 200, HEIGHT // 2, 400, 50)
         self.active = False
+        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -65,7 +66,7 @@ class PlayerNamePage:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.bacground, (0, 0))
 
         text_surface = fonts["lg"].render("Enter Your Name", True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))

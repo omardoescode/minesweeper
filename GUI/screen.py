@@ -8,8 +8,8 @@ from .MainMenu import MainMenu
 from .GameOver import GameOver
 from .GameWin import GameWin
 from .CustomDifficulty import CustomDifficulty
-from .pause_menu import PauseMenu
-
+from .PauseMenu import PauseMenu
+from .CreditsPage import CreditsPage
 class GUI:
     def __init__(self):
         pygame.init()
@@ -84,6 +84,8 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                     )
+                case "credits":
+                    current_page = CreditsPage()
             current_page.update(self.screen, self.fonts)
 
             pygame.display.flip()

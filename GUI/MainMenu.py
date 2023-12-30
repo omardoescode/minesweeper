@@ -8,6 +8,7 @@ class MainMenu:
         self.title_text = "Minesweeper Main Menu"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
+        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -43,11 +44,31 @@ class MainMenu:
             fonts,
             handle_click,
         )
+    
+    def draw_small_button(self, text, position, screen, fonts, handle_click=lambda: None):
+        return create_button(
+            position[0] - 60,
+            position[1] + 25,
+            120,
+            50,
+            text,
+            (255, 255, 255),
+            SECONDARY_COLOR,
+            (0, 0, 0),
+            screen,
+            fonts,
+            handle_click,
+            text_size="sm"
+        )
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.bacground, (0, 0))
 
+
+        self.draw_title(
+            "Welcome to", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 - 40
+        )
         self.draw_title("Minesweeper", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
         self.draw_title(
             f"Hello, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
@@ -66,4 +87,11 @@ class MainMenu:
         )
         self.navigation_buttons.append(
             {"obj": quit_button, "val": "quit_game", "kwargs": {}}
+        )
+    
+        credits_btn = self.draw_small_button(
+            "Credits", (WIDTH - 80, HEIGHT - 100), screen, fonts
+        )
+        self.navigation_buttons.append(
+            {"obj": credits_btn, "val": "credits", "kwargs": {}}
         )
