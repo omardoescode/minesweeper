@@ -56,7 +56,7 @@ class CustomDifficulty:
                                 break
                             values[input["label"]] = int(value)
                     else:
-                        return "board", values
+                        return "BOARD", values
 
                 for input in self.inputs:
                     # Make it active

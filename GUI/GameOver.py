@@ -15,7 +15,7 @@ class GameOver:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
@@ -66,7 +66,7 @@ class GameOver:
         self.navigation_buttons.append(
             {
                 "obj": game_start,
-                "val": "board",
+                "val": "BOARD",
                 "kwargs": {
                     "rows": self.rows,
                     "columns": self.columns,
@@ -78,11 +78,11 @@ class GameOver:
             "Main Menu", (WIDTH // 2, HEIGHT // 3 + 160), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": back_main_menu, "val": "main_menu", "kwargs": {}}
+            {"obj": back_main_menu, "val": "MAIN_MENU", "kwargs": {}}
         )
         quit_button = self.draw_button(
             "Quit", (WIDTH // 2, HEIGHT // 3 + 280), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": quit_button, "val": "quit_game", "kwargs": {}}
+            {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}
         )

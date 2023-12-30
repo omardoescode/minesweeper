@@ -15,11 +15,11 @@ class PlayerNamePage:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.submit_button.collidepoint(event.pos):
                     if self.text_input:
-                        return "main_menu", {
+                        return "MAIN_MENU", {
                             "name": self.text_input
                         }  # Proceed to the main menu
                 if self.input_rect.collidepoint(event.pos):
@@ -33,7 +33,7 @@ class PlayerNamePage:
                     if event.key == pygame.K_RETURN:
                         if self.text_input:
                             return (
-                                "main_menu",
+                                "MAIN_MENU",
                                 {"name": self.text_input},
                             )  # Proceed to the game board
                     elif event.key == pygame.K_BACKSPACE:

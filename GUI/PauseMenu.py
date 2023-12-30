@@ -7,16 +7,16 @@ class PauseMenu:
             ]
         elif state == "didn't_start":
             self.buttons = [
-                {"text": "Continue", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines}}
+                {"text": "Continue", "action": "BOARD", "kwargs": {"rows": rows, "columns": columns, "mines": mines}}
             ]
         else:
             self.buttons = [
-                {"text": "Continue", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines, "board": board}}
+                {"text": "Continue", "action": "BOARD", "kwargs": {"rows": rows, "columns": columns, "mines": mines, "board": board}}
             ]
         self.buttons +=[
-            {"text": "Restart", "action": "board", "kwargs": {"rows": rows, "columns": columns, "mines": mines}},
-            {"text": "Main Menu", "action": "main_menu", "kwargs": None},
-            {"text": "Quit", "action": "quit_game", "kwargs": None},
+            {"text": "Restart", "action": "BOARD", "kwargs": {"rows": rows, "columns": columns, "mines": mines}},
+            {"text": "Main Menu", "action": "MAIN_MENU", "kwargs": None},
+            {"text": "Quit", "action": "QUIT_GAME", "kwargs": None},
         ]
         self.selected_button = 0
 
@@ -41,7 +41,7 @@ class PauseMenu:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.selected_button = (self.selected_button - 1) % len(

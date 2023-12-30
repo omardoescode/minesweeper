@@ -14,7 +14,7 @@ class Difficulty:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
@@ -46,7 +46,7 @@ class Difficulty:
             self.navigation_buttons.append(
                 {
                     "obj": btn,
-                    "val": "board",
+                    "val": "BOARD",
                     "kwargs": {
                         "rows": BOARD_SIZE[dif][0],
                         "columns": BOARD_SIZE[dif][1],
@@ -59,9 +59,9 @@ class Difficulty:
             "Custom", (WIDTH // 2, y), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": custom_difficulty_button, "val": "custom_difficulty", "kwargs": {}}
+            {"obj": custom_difficulty_button, "val": "CUSTOM_DIFFICULTY", "kwargs": {}}
         )
         go_back_button = self.draw_button("Back", (WIDTH // 2, y + 120), screen, fonts)
         self.navigation_buttons.append(
-            {"obj": go_back_button, "val": "main_menu", "kwargs": {}}
+            {"obj": go_back_button, "val": "MAIN_MENU", "kwargs": {}}
         )

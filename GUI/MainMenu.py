@@ -13,7 +13,7 @@ class MainMenu:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
@@ -78,7 +78,7 @@ class MainMenu:
             "Game Start", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": game_start, "val": "difficulty", "kwargs": None}
+            {"obj": game_start, "val": "DIFFICULTY", "kwargs": None}
         )
         # TODO: Handle the Stats functionailty
         self.draw_button("Stats", (WIDTH // 2, HEIGHT // 3 + 160), screen, fonts)
@@ -86,12 +86,12 @@ class MainMenu:
             "Quit", (WIDTH // 2, HEIGHT // 3 + 280), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": quit_button, "val": "quit_game", "kwargs": {}}
+            {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}
         )
     
         credits_btn = self.draw_small_button(
             "Credits", (WIDTH - 80, HEIGHT - 100), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": credits_btn, "val": "credits", "kwargs": {}}
+            {"obj": credits_btn, "val": "CREDITS", "kwargs": {}}
         )
