@@ -32,6 +32,14 @@ def retrieve_game(username):
 def delete_game(username):
     pass
 
+# string -> boolean
+# Check if the player has a previous game uncontinued
+# Check if the player has a file named after him in the games folder
+# Return true if the player has a file named <username>, otherwise false
+
+def check_game(username):
+    pass
+
     
 
 
