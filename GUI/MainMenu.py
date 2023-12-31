@@ -12,8 +12,11 @@ class MainMenu:
 
     def handle_events(self):
         for event in pygame.event.get():
+            # Check for quitting the game
             if event.type == pygame.QUIT:
                 return "QUIT_GAME", None
+            
+            # Check if clicking buttons
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
@@ -66,6 +69,7 @@ class MainMenu:
         screen.blit(self.bacground, (0, 0))
 
 
+        # Draw Header
         self.draw_title(
             "Welcome to", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 - 40
         )
@@ -74,6 +78,7 @@ class MainMenu:
             f"Hello, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
         )
 
+        # Draw Buttons
         game_start = self.draw_button(
             "Game Start", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
         )
@@ -89,9 +94,10 @@ class MainMenu:
             {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}
         )
     
-        credits_btn = self.draw_small_button(
-            "Credits", (WIDTH - 80, HEIGHT - 100), screen, fonts
+        # Draw About Page
+        about_btn = self.draw_small_button(
+            "About", (WIDTH - 80, HEIGHT - 100), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": credits_btn, "val": "CREDITS", "kwargs": {}}
+            {"obj": about_btn, "val": "ABOUT", "kwargs": {}}
         )

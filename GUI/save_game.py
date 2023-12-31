@@ -39,8 +39,3 @@ def delete_game(username):
 
 def check_game(username):
     pass
-
-    
-
-
-
