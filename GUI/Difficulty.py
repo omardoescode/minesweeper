@@ -9,11 +9,12 @@ class Difficulty:
         self.title_text = "Minesweeper: Choose the difficulty"
         self.navigation_buttons = []
         self.vertical_placement = HEIGHT // 5
+        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
@@ -37,7 +38,7 @@ class Difficulty:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.bacground, (0, 0))
 
         y = 100
         for dif in DIFFICULTIES.values():
@@ -45,7 +46,7 @@ class Difficulty:
             self.navigation_buttons.append(
                 {
                     "obj": btn,
-                    "val": "board",
+                    "val": "BOARD",
                     "kwargs": {
                         "rows": BOARD_SIZE[dif][0],
                         "columns": BOARD_SIZE[dif][1],
@@ -58,9 +59,9 @@ class Difficulty:
             "Custom", (WIDTH // 2, y), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": custom_difficulty_button, "val": "custom_difficulty", "kwargs": {}}
+            {"obj": custom_difficulty_button, "val": "CUSTOM_DIFFICULTY", "kwargs": {}}
         )
         go_back_button = self.draw_button("Back", (WIDTH // 2, y + 120), screen, fonts)
         self.navigation_buttons.append(
-            {"obj": go_back_button, "val": "main_menu", "kwargs": {}}
+            {"obj": go_back_button, "val": "MAIN_MENU", "kwargs": {}}
         )

@@ -8,7 +8,9 @@ from .MainMenu import MainMenu
 from .GameOver import GameOver
 from .GameWin import GameWin
 from .CustomDifficulty import CustomDifficulty
-from .pause_menu import PauseMenu
+from .PauseMenu import PauseMenu
+from .CreditsPage import CreditsPage
+from .MusicPlayer import MusicPlayer
 
 class GUI:
     def __init__(self):
@@ -25,23 +27,24 @@ class GUI:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.running = True
         self.username = None
+        self.music_player = MusicPlayer()
 
     def start_game(self):
         current_page = PlayerNamePage()
-
+        self.music_player.play_default_music()
         while True:
             action, kwargs = current_page.handle_events()
 
             match action:
-                case "quit_game":
+                case "QUIT_GAME":
                     pygame.quit()
                     sys.exit()
-                case "main_menu":
+                case "MAIN_MENU":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     if kwargs and "name" in kwargs:
                         self.username = kwargs["name"]
                     current_page = MainMenu(self.username)
-                case "pause_menu":
+                case "PAUSE_MENU":
                     current_page = PauseMenu(
                         kwargs["rows"],
                         kwargs["columns"],
@@ -50,13 +53,13 @@ class GUI:
                         kwargs["state"]
                     )
 
-                case "difficulty":
+                case "DIFFICULTY":
                     current_page = Difficulty()
 
-                case "custom_difficulty":
+                case "CUSTOM_DIFFICULTY":
                     current_page = CustomDifficulty()
 
-                case "board":
+                case "BOARD":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     board = None
                     if kwargs and "board" in kwargs:
@@ -67,8 +70,9 @@ class GUI:
                         kwargs["mines"],
                         board=board
                     )
+                    self.music_player.play_board_music()
 
-                case "game_lose":
+                case "GAME_LOSE":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     current_page = GameOver(
                         self.username,
@@ -76,7 +80,8 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                     )
-                case "game_win":
+                    self.music_player.play_losing_music()
+                case "GAME_WIN":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     current_page = GameWin(
                         self.username,
@@ -84,6 +89,9 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                     )
+                    self.music_player.play_winning_music()
+                case "CREDITS":
+                    current_page = CreditsPage()
             current_page.update(self.screen, self.fonts)
 
             pygame.display.flip()

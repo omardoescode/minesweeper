@@ -127,6 +127,9 @@ class Board(Game):
             self.start_playing = True
             self.board = board
 
+        # Load the background
+        self.background = pygame.image.load('./assets/background.png')
+
         # Load the images of the cells
         self.covered_image = pygame.transform.scale(
             pygame.image.load("./assets/in_game_icons/board/covered-cell.png"),
@@ -265,7 +268,7 @@ class Board(Game):
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
 
             # Handle Pause Menu
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -276,7 +279,7 @@ class Board(Game):
                 else:
                     state = "over"
                 if self.menu.collidepoint(event.pos):
-                    return "pause_menu", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state}
+                    return "PAUSE_MENU", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state}
 
             # Handle clicking on cells
             if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
@@ -314,7 +317,7 @@ class Board(Game):
                 pygame.time.set_timer(pygame.USEREVENT+2, 0)
 
                 if self.start_playing and self.check_win():
-                    return "game_win", {
+                    return "GAME_WIN", {
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
@@ -322,7 +325,7 @@ class Board(Game):
                     }
 
                 if not self.playing:
-                    return "game_lose", {
+                    return "GAME_LOSE", {
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
@@ -332,7 +335,7 @@ class Board(Game):
         return None, None
 
     def update(self, screen, fonts):
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.background, (0, 0))
         pygame.display.set_caption("Enjoy!!!")
         self.draw_topbar(screen, fonts)
         self.draw_cells(screen)

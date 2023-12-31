@@ -10,15 +10,16 @@ class PlayerNamePage:
         self.text_input = ""
         self.input_rect = pygame.Rect(WIDTH // 2 - 200, HEIGHT // 2, 400, 50)
         self.active = False
+        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.submit_button.collidepoint(event.pos):
                     if self.text_input:
-                        return "main_menu", {
+                        return "MAIN_MENU", {
                             "name": self.text_input
                         }  # Proceed to the main menu
                 if self.input_rect.collidepoint(event.pos):
@@ -32,7 +33,7 @@ class PlayerNamePage:
                     if event.key == pygame.K_RETURN:
                         if self.text_input:
                             return (
-                                "main_menu",
+                                "MAIN_MENU",
                                 {"name": self.text_input},
                             )  # Proceed to the game board
                     elif event.key == pygame.K_BACKSPACE:
@@ -65,7 +66,7 @@ class PlayerNamePage:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.bacground, (0, 0))
 
         text_surface = fonts["lg"].render("Enter Your Name", True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))

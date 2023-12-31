@@ -10,6 +10,9 @@ class CustomDifficulty:
         self.inputs = []
         self.submit_button = pygame.Rect(0, 0, 0, 0)
         self.header = "Enter the rows, columns, and mines"
+        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
+
+        # Gathering info about buttons
         info = ["rows", "columns", "mines"]
 
         self.y = HEIGHT // 2
@@ -53,7 +56,7 @@ class CustomDifficulty:
                                 break
                             values[input["label"]] = int(value)
                     else:
-                        return "board", values
+                        return "BOARD", values
 
                 for input in self.inputs:
                     # Make it active
@@ -130,7 +133,7 @@ class CustomDifficulty:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill(PRIMARY_COLOR)
+        screen.blit(self.bacground, (0, 0))
 
         text_surface = fonts["md"].render(self.header, True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))
