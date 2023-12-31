@@ -4,11 +4,13 @@ from GUI.gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
 
 
 class MainMenu:
-    def __init__(self, username):
+    def __init__(self, username, music_player):
         self.title_text = "Minesweeper Main Menu"
-        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
-        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
+        self.music_player = music_player
+
+        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
+        self.background = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -21,6 +23,11 @@ class MainMenu:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
                         return btn["val"], btn["kwargs"]
+                
+                # Checking if the button is mute button
+                if self.toggle_mute_btn.collidepoint(event.pos):
+                    self.music_player.toggle_mute_music()
+
         return None, None
 
     def draw_title(self, text, screen, font, x, y):
@@ -66,7 +73,7 @@ class MainMenu:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.blit(self.bacground, (0, 0))
+        screen.blit(self.background, (0, 0))
 
 
         # Draw Header
@@ -100,4 +107,10 @@ class MainMenu:
         )
         self.navigation_buttons.append(
             {"obj": about_btn, "val": "ABOUT", "kwargs": {}}
+        )
+        
+        # Draw Mute/Unmute button
+        toggle_mute_text = "Unmute" if self.music_player.is_muted else "Mute"
+        self.toggle_mute_btn = self.draw_small_button(
+            toggle_mute_text, (WIDTH - 80, HEIGHT - 160), screen, fonts
         )

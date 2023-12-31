@@ -39,9 +39,9 @@ class GUI:
 
             match action:
                 case "QUIT_GAME":
+                    self.running = False
                     pygame.quit()
                     sys.exit()
-                    self.running = False
                 case "MAIN_MENU":
                     # Reset the screen coordinates
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -49,7 +49,7 @@ class GUI:
                     # Check for username value
                     if kwargs and "name" in kwargs:
                         self.username = kwargs["name"]
-                    current_page = MainMenu(self.username)
+                    current_page = MainMenu(self.username, self.music_player)
                     
                     # This code will run when navigating from board to main menu
                     # As the music changes, so cannot continue the music from player page name
