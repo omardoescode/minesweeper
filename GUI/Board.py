@@ -283,7 +283,7 @@ class Board(Game):
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # Save the game in case it was clicked while the game is over
+                # Save the game in case it was clicked while the game is over, or before it even started
                 if self.playing:
                     store_game(self.username, self.rows, self.columns, self.mines, self.board, self.timer.get_elapsed_time())
                 
@@ -301,8 +301,8 @@ class Board(Game):
                     else:
                         state = "over"
                     
-                    # Save the game in case it was clicked while the game is over
-                    if self.playing:
+                    # Save the game in case it was clicked while the game is over, or before it even started
+                    if self.playing and self.start_playing:
                         store_game(self.username, self.rows, self.columns, self.mines, self.board, self.timer.get_elapsed_time())
                     
                     # Navigate to pause menu
