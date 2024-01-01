@@ -66,7 +66,7 @@ class GUI:
 
                 case "BOARD":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-                    current_page = Board(**kwargs)
+                    current_page = Board(self.username, **kwargs)
 
                     # Play the board music
                     self.music_player.play_board_music()

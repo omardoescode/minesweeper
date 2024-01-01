@@ -2,12 +2,8 @@ import json
 import os
 from typing import List, Optional, Dict, Any
 from classes import Cell
-
 '''
-Cell:
-    val: [0:8] or F or M (1 through 8 for number or f for flagged or m for mines)
-    is_flagged: boolean
-    is_covered: boolean
+Cell: [Previously defined in classes.py]
 
 Board: (listof Cell)
 
@@ -15,6 +11,7 @@ GameSavedObject:
     rows: int
     columns: int
     mines: int
+    initial_time
     baord: Board
 '''
 # string, int, int, int, Board -> ()
@@ -26,8 +23,12 @@ def store_game(username: str, rows: int, columns: int, mines: int, board: List[C
         "columns": columns,
         "mines": mines,
         "initial_time": initial_time,
-        "board": [vars(cell) for cell in board]
+        "board": [[cell.__dict__() for cell in row] for row in board]
     }
+
+    # Create the games folder if it doesn't exist
+    if not os.path.exists('games'):
+        os.makedirs('games')
 
     path = fr'games/{username}.json'
     with open(path, 'w') as file:
@@ -44,7 +45,7 @@ def retrieve_game(username: str) -> Optional[Dict]:
     # If it's not, return the object
     with open(fr'games/{username}.json', 'r') as file:
         data = json.load(file)
-        board = [Cell(**cell) for cell in data["board"]]
+        board = [[Cell(**cell) for cell in row] for row in data["board"]]
         return {**data, "board": board}
         
 # string -> boolean

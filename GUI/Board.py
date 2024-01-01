@@ -1,10 +1,11 @@
 import pygame
 from classes import Game
 from GUI.gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
-from GUI.gui_helpers import calculate_cell_size, get_page_coordinates, create_button, started_playing
+from GUI.gui_helpers import calculate_cell_size, create_button 
 from GUI.flag_counter import FlagCounter
 from timer import Timer
 from GUI.scorer import Scorer
+from .save_game import store_game, delete_game
 
 class GUICell:
     def __init__(
@@ -104,12 +105,13 @@ class GUICell:
 
 
 class Board(Game):
-    def __init__(self, rows, columns, mines, board=None, initial_time=0, border_size=1):
+    def __init__(self,username, rows, columns, mines, board=None, initial_time=0, border_size=1):
         # Initilaize the inherited game object
         super().__init__(rows, columns, mines)
 
         # Initilaize the object
         self.title_text = "board"
+        self.username = username
         self.rows = rows
         self.columns = columns
         self.cell_size = calculate_cell_size(rows, columns)
@@ -119,6 +121,9 @@ class Board(Game):
         self.height = rows * self.cell_size + TOP_MARGIN
         self.cells = ['X']*(self.columns*self.rows)
         self.screen = pygame.display.set_mode((self.width, self.height))
+
+        # Remove past records
+        delete_game(username) # Will do nothing if it doesn't exist
 
         # Initalize the timer
         self.timer = Timer()
@@ -245,8 +250,6 @@ class Board(Game):
             screen.blit(icon, bg_rect.topleft)
 
     def draw_topbar(self, screen, fonts):
-        # TODO: Change the time and flag text to some icons to be placed with them
-        # TODO: change the font from xs to sm after implementing so
         # Timer
         time = f"{self.timer.get_elapsed_time():.0f}s"
         self.draw_siderbar_item(screen, fonts["sm"], time, 150, 40, self.TB_timer_image)
@@ -280,17 +283,29 @@ class Board(Game):
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                # Save the game in case it was clicked while the game is over
+                if self.playing:
+                    store_game(self.username, self.rows, self.columns, self.mines, self.board, self.timer.get_elapsed_time())
+                
+                # Use Navigation & Quit the game
                 return "QUIT_GAME", None
 
             # Handle Pause Menu
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if not self.start_playing:
-                    state = "didn't_start"
-                elif self.playing:
-                    state = "playing"
-                else:
-                    state = "over"
                 if self.menu.collidepoint(event.pos):
+                    # Handle the stat variable
+                    if not self.start_playing:
+                        state = "didn't_start"
+                    elif self.playing:
+                        state = "playing"
+                    else:
+                        state = "over"
+                    
+                    # Save the game in case it was clicked while the game is over
+                    if self.playing:
+                        store_game(self.username, self.rows, self.columns, self.mines, self.board, self.timer.get_elapsed_time())
+                    
+                    # Navigate to pause menu
                     return "PAUSE_MENU", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state, "initial_time": self.timer.get_elapsed_time()}
 
             # Handle clicking on cells
@@ -334,7 +349,6 @@ class Board(Game):
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
-                        "cell_size": self.cell_size,
                     }
 
                 if not self.playing:
@@ -342,7 +356,6 @@ class Board(Game):
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
-                        "cell_size": self.cell_size,
                     }
             
         return None, None
