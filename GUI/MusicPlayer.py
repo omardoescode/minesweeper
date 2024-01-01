@@ -15,14 +15,14 @@ class MusicPlayer:
         pygame.mixer.music.load(fr'./assets/music/{filename}')
         pygame.mixer.music.play(loops, 0)
         self.running_music = filename
-
-
+            
     # Play the music
     # TODO: Change these paths to the proper paths once created
-    play_default_music = lambda self: self.play_music('./assets/music/default.mp3')
-    play_winning_music = lambda self: self.play_music('./assets/music/default.mp3')
-    play_losing_music = lambda self: self.play_music('./assets/music/default.mp3')
-    play_board_music = lambda self: self.play_music('./assets/music/default.mp3')
+        
+    play_default_music = lambda self: self.play_music('default.mp3', -1)
+    play_winning_music = lambda self: self.play_music('default.mp3', -1)
+    play_losing_music = lambda self: self.play_music('default.mp3', -1)
+    play_board_music = lambda self: self.play_music('default.mp3', -1)
     play_dig_sound = lambda self, channel: self.play_sound(channel, './assets/music/dig.mp3')
     play_flag_sound = lambda self, channel: self.play_sound(channel, './assets/music/flag.mp3')
     play_beep_sound = lambda self, channel: self.play_sound(channel, './assets/music/beep.mp3')
