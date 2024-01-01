@@ -66,22 +66,7 @@ class GUI:
 
                 case "BOARD":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-                    board = None
-                    initial_time = 0
-                    
-                    # Check if coming from pause menu, where board value exists
-                    if kwargs and "board" in kwargs:
-                        board = kwargs["board"]
-                        initial_time = kwargs["initial_time"]
-
-
-                    current_page = Board(
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
-                        board=board,
-                        initial_time=initial_time 
-                    )
+                    current_page = Board(**kwargs)
 
                     # Play the board music
                     self.music_player.play_board_music()
@@ -92,9 +77,7 @@ class GUI:
 
                     current_page = GameOver(
                         self.username,
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
+                        **kwargs
                     )
                     self.music_player.play_losing_music()
                 case "GAME_WIN":
@@ -103,9 +86,7 @@ class GUI:
 
                     current_page = GameWin(
                         self.username,
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
+                        **kwargs
                     )
                     self.music_player.play_winning_music()
                 case "ABOUT":

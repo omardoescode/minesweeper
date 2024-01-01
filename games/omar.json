@@ -1,0 +1,15 @@
+{
+  "rows": 1,
+  "columns": 1,
+  "mines": 1,
+  "initial_time": 4,
+  "board": [
+    {
+      "row": 1,
+      "column": 1,
+      "is_flagged": false,
+      "is_covered": true,
+      "val": "M"
+    }
+  ]
+}
