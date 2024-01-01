@@ -4,6 +4,7 @@ from GUI.gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
 from GUI.gui_helpers import calculate_cell_size, get_page_coordinates, create_button, started_playing
 from GUI.flag_counter import FlagCounter
 from timer import Timer
+from GUI.MusicPlayer import MusicPlayer
 from GUI.scorer import Scorer
 
 class GUICell:
@@ -25,7 +26,8 @@ class GUICell:
         cell_size,
         border_size,
         stop_input,
-        flag_counter
+        flag_counter,
+        music_player
     ):
         self.coordinates = coordinates
         self.cell_size = cell_size
@@ -51,8 +53,10 @@ class GUICell:
         self.flag_image = flag_image
         self.stop_input = stop_input
         self.flag_counter = flag_counter
+        self.music_player = music_player
 
     def reveal_cell(self):
+        self.music_player.play_dig_sound(channel=1)
         self.handle_click(self.coordinates[0], self.coordinates[1])
         
         if self.value == "M":
@@ -62,6 +66,7 @@ class GUICell:
         self.is_clicked = True
 
     def flag_cell(self):
+        self.music_player.play_flag_sound(channel=2)
         self.is_flagged = not self.is_flagged
 
         if self.is_flagged:
@@ -99,7 +104,7 @@ class GUICell:
 
 
 class Board(Game):
-    def __init__(self, rows, columns, mines, board=None, border_size=1):
+    def __init__(self, rows, columns, mines, music_player, board=None, border_size=1):
         super().__init__(rows, columns, mines)
         self.title_text = "board"
         self.rows = rows
@@ -107,6 +112,7 @@ class Board(Game):
         self.cell_size = calculate_cell_size(rows, columns)
         self.border_size = border_size
         self.stop_input = False
+        self.music_player = music_player
         self.width = columns * self.cell_size
         self.height = rows * self.cell_size + TOP_MARGIN
         self.cells = ['X']*(self.columns*self.rows)
@@ -206,7 +212,8 @@ class Board(Game):
                     self.cell_size,
                     self.border_size,
                     self.handle_stop_input,
-                    self.flag_counter
+                    self.flag_counter,
+                    self.music_player
                 )
                 self.cells[row_index*self.columns + column_index] = cell
                 cell.draw_cell(screen) 
@@ -304,6 +311,7 @@ class Board(Game):
             if event.type == (pygame.USEREVENT+1):
                 uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.is_clicked == False, self.cells))
                 if len(uncovered_mines) > 0:
+                    self.music_player.play_beep_sound(channel=len(uncovered_mines)+2)
                     next_mine = uncovered_mines[0]
                     row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
                     self.board[row_index][column_index].is_flagged = False
@@ -315,7 +323,6 @@ class Board(Game):
 
             if event.type == pygame.USEREVENT + 2:
                 pygame.time.set_timer(pygame.USEREVENT+2, 0)
-
                 if self.start_playing and self.check_win():
                     return "GAME_WIN", {
                         "rows": self.rows,

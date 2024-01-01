@@ -68,6 +68,7 @@ class GUI:
                         kwargs["rows"],
                         kwargs["columns"],
                         kwargs["mines"],
+                        self.music_player,
                         board=board
                     )
                     self.music_player.play_board_music()
