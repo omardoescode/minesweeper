@@ -4,20 +4,30 @@ from GUI.gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
 
 
 class MainMenu:
-    def __init__(self, username):
+    def __init__(self, username, music_player):
         self.title_text = "Minesweeper Main Menu"
-        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
-        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
+        self.music_player = music_player
+
+        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
+        self.background = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
 
     def handle_events(self):
         for event in pygame.event.get():
+            # Check for quitting the game
             if event.type == pygame.QUIT:
                 return "QUIT_GAME", None
+            
+            # Check if clicking buttons
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
                         return btn["val"], btn["kwargs"]
+                
+                # Checking if the button is mute button
+                if self.toggle_mute_btn.collidepoint(event.pos):
+                    self.music_player.toggle_mute_music()
+
         return None, None
 
     def draw_title(self, text, screen, font, x, y):
@@ -63,9 +73,10 @@ class MainMenu:
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.blit(self.bacground, (0, 0))
+        screen.blit(self.background, (0, 0))
 
 
+        # Draw Header
         self.draw_title(
             "Welcome to", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 - 40
         )
@@ -74,6 +85,7 @@ class MainMenu:
             f"Hello, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
         )
 
+        # Draw Buttons
         game_start = self.draw_button(
             "Game Start", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
         )
@@ -89,9 +101,16 @@ class MainMenu:
             {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}
         )
     
-        credits_btn = self.draw_small_button(
-            "Credits", (WIDTH - 80, HEIGHT - 100), screen, fonts
+        # Draw About Page
+        about_btn = self.draw_small_button(
+            "About", (WIDTH - 80, HEIGHT - 100), screen, fonts
         )
         self.navigation_buttons.append(
-            {"obj": credits_btn, "val": "CREDITS", "kwargs": {}}
+            {"obj": about_btn, "val": "ABOUT", "kwargs": {}}
+        )
+        
+        # Draw Mute/Unmute button
+        toggle_mute_text = "Unmute" if self.music_player.is_muted else "Mute"
+        self.toggle_mute_btn = self.draw_small_button(
+            toggle_mute_text, (WIDTH - 80, HEIGHT - 160), screen, fonts
         )

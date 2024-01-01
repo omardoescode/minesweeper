@@ -29,6 +29,7 @@ class GUICell:
         flag_counter,
         music_player
     ):
+        # Initlaize the cell object, saving all given parameters
         self.coordinates = coordinates
         self.cell_size = cell_size
         self.border_size = border_size
@@ -55,6 +56,8 @@ class GUICell:
         self.flag_counter = flag_counter
         self.music_player = music_player
 
+    # () -> ()
+    # Reveal the cell. Start losing animation if it was mine
     def reveal_cell(self):
         self.music_player.play_dig_sound(channel=1)
         self.handle_click(self.coordinates[0], self.coordinates[1])
@@ -65,6 +68,8 @@ class GUICell:
 
         self.is_clicked = True
 
+    # () -> ()
+    # Toggle the flag state of the cell. Increase the counter of the flag or derease
     def flag_cell(self):
         self.music_player.play_flag_sound(channel=2)
         self.is_flagged = not self.is_flagged
@@ -105,7 +110,10 @@ class GUICell:
 
 class Board(Game):
     def __init__(self, rows, columns, mines, music_player, board=None, border_size=1):
+        # Initilaize the inherited game object
         super().__init__(rows, columns, mines)
+
+        # Initilaize the object
         self.title_text = "board"
         self.rows = rows
         self.columns = columns
@@ -159,16 +167,6 @@ class Board(Game):
         )
         self.value_images = []
 
-        # Load the images of the sidebar
-        self.TB_flag_image = pygame.transform.scale(
-            pygame.image.load("./assets/in_game_icons/board/red-flag.png"),
-            (30, 30),
-        )
-
-        self.TB_timer_image = pygame.transform.scale(
-            pygame.image.load("./assets/in_game_icons/clock.png"),
-            (30, 30),
-        )
         for i in range(8):
             self.value_images.append(
                 pygame.transform.scale(
@@ -179,9 +177,21 @@ class Board(Game):
                 )
             )
 
+        # Load the images of the sidebar
+        self.TB_flag_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/board/red-flag.png"),
+            (30, 30),
+        )
+
+        self.TB_timer_image = pygame.transform.scale(
+            pygame.image.load("./assets/in_game_icons/clock.png"),
+            (30, 30),
+        )
+
     def handle_stop_input(self):
         self.stop_input = True
 
+    # Draw the board
     def draw_cells(self, screen):
         for row_index in range(len(self.board)):
             for column_index in range(len(self.board[row_index])):
@@ -218,7 +228,8 @@ class Board(Game):
                 self.cells[row_index*self.columns + column_index] = cell
                 cell.draw_cell(screen) 
     
-    def draw_item(self, screen, font, text, x, y, icon=None):
+    # Draw an item in the siderbar
+    def draw_siderbar_item(self, screen, font, text, x, y, icon=None):
         # Assuming screen is the Pygame surface
         screen_width = screen.get_width()
 
@@ -244,15 +255,15 @@ class Board(Game):
         # TODO: change the font from xs to sm after implementing so
         # Timer
         time = f"{self.timer.get_elapsed_time():.0f}s"
-        self.draw_item(screen, fonts["sm"], time, 150, 40, self.TB_timer_image)
+        self.draw_siderbar_item(screen, fonts["sm"], time, 150, 40, self.TB_timer_image)
 
         # Score
         score = f"Score: {self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time())} XP"
-        self.draw_item(screen, fonts["xs"], score, 300 + 10, 40)
+        self.draw_siderbar_item(screen, fonts["xs"], score, 300 + 10, 40)
 
         # Flag Counter
         flags = f"{self.flag_counter.get_remaining_flags()}"
-        self.draw_item(screen, fonts["sm"], flags, 450 + 20, 40, self.TB_flag_image)
+        self.draw_siderbar_item(screen, fonts["sm"], flags, 450 + 20, 40, self.TB_flag_image)
 
         self.menu = self.draw_button("Pause", (10, 30), screen, fonts)
         
@@ -292,7 +303,8 @@ class Board(Game):
             if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
                 coords = pygame.mouse.get_pos()
 
-                # terminate the game, when clicking on the top margin
+                # This if statement aims to prevent a bug
+                # The bug is that it gives a negative index to the board list, causing it to dig the last row of cells
                 if coords[1] >= TOP_MARGIN:
                     column, row = coords[0]//self.cell_size, (coords[1] - TOP_MARGIN)//self.cell_size
                     cell = self.cells[row*self.columns + column]
