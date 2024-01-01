@@ -83,7 +83,7 @@ class MainMenu:
         )
         self.draw_title("Minesweeper", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
         self.draw_title(
-            f"Hello, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
+            f"Dig in, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
         )
 
         # Check for previous game
