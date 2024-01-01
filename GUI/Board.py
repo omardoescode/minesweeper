@@ -104,7 +104,7 @@ class GUICell:
 
 
 class Board(Game):
-    def __init__(self, rows, columns, mines, board=None, border_size=1):
+    def __init__(self, rows, columns, mines, board=None, initial_time=0, border_size=1):
         # Initilaize the inherited game object
         super().__init__(rows, columns, mines)
 
@@ -134,6 +134,7 @@ class Board(Game):
         if board:
             self.start_playing = True
             self.board = board
+            self.timer.initial_time = initial_time
 
         # Load the background
         self.background = pygame.image.load('./assets/background.png')
@@ -290,7 +291,7 @@ class Board(Game):
                 else:
                     state = "over"
                 if self.menu.collidepoint(event.pos):
-                    return "PAUSE_MENU", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state}
+                    return "PAUSE_MENU", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state, "initial_time": self.timer.get_elapsed_time()}
 
             # Handle clicking on cells
             if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:

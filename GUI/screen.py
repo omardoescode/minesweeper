@@ -56,13 +56,7 @@ class GUI:
                     if not self.music_player.check_default_music():
                         self.music_player.play_default_music() 
                 case "PAUSE_MENU":
-                    current_page = PauseMenu(
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
-                        kwargs["board"],
-                        kwargs["state"]
-                    )
+                    current_page = PauseMenu(**kwargs)
 
                 case "DIFFICULTY":
                     current_page = Difficulty()
@@ -73,16 +67,20 @@ class GUI:
                 case "BOARD":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     board = None
+                    initial_time = 0
                     
                     # Check if coming from pause menu, where board value exists
                     if kwargs and "board" in kwargs:
                         board = kwargs["board"]
+                        initial_time = kwargs["initial_time"]
+
 
                     current_page = Board(
                         kwargs["rows"],
                         kwargs["columns"],
                         kwargs["mines"],
-                        board=board
+                        board=board,
+                        initial_time=initial_time 
                     )
 
                     # Play the board music
