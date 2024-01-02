@@ -1,12 +1,9 @@
 import json
 import os
 from typing import List, Optional, Dict, Any
-
+from classes import Cell
 '''
-Cell:
-    val: [0:8] or F or M (1 through 8 for number or f for flagged or m for mines)
-    is_flagged: boolean
-    is_covered: boolean
+Cell: [Previously defined in classes.py]
 
 Board: (listof Cell)
 
@@ -14,54 +11,52 @@ GameSavedObject:
     rows: int
     columns: int
     mines: int
+    initial_time
     baord: Board
 '''
-class Cell:
-    def __init__(self, val: str, is_flagged: bool, is_covered: bool):
-        self.val = val
-        self.is_flagged = is_flagged
-        self.is_covered = is_covered
-
-class GameSavedObject:
-    def __init__(self, rows: int, columns: int, mines: int, board: List[Cell]):
-        self.rows = rows
-        self.columns = columns
-        self.mines = mines
-        self.board = board
-        
 # string, int, int, int, Board -> ()
 # create a new file in folder games called <username>.json
 # This file has a GameSavedObject
-def store_game(username: str, rows: int, columns: int, mines: int, board: List[Cell]):
+def store_game(username: str, rows: int, columns: int, mines: int, board: List[Cell], initial_time):
     game_data = {
         "rows": rows,
         "columns": columns,
         "mines": mines,
-        "board": [vars(cell) for cell in board]
+        "initial_time": initial_time,
+        "board": [[cell.__dict__() for cell in row] for row in board]
+    }
+
+    # Create the games folder if it doesn't exist
+    if not os.path.exists('games'):
+        os.makedirs('games')
+
+    path = fr'games/{username}.json'
+    with open(path, 'w') as file:
+        json.dump(game_data, file, indent=2)
 
 # string -> (listof GameSavedObject)
 # Retrieves the GameSavedObject of the given username
 # the file should be in <username>.json
 # Return an empty object if there's none
-def retrieve_game(username: str) -> Optional[GameSavedObject]:
-    try:
-        with open(f'games/{username}.json', 'r') as file:
-            data = json.load(file)
-            board = [Cell(**cell) for cell in data["board"]]
-            return GameSavedObject(data["rows"], data["columns"], data["mines"], board)
-    except FileNotFoundError:
-        return None
+def retrieve_game(username: str) -> Optional[Dict]:
+    # If the file doesn't exist, return an empty object
+    if not check_game(username): return {}
+
+    # If it's not, return the object
+    with open(fr'games/{username}.json', 'r') as file:
+        data = json.load(file)
+        board = [[Cell(**cell) for cell in row] for row in data["board"]]
+        return {**data, "board": board}
         
 # string -> boolean
 # delete the json file named <username>.json in games folder
 # Return true if the file has been deleted, or false if the file doesn't exist (OPTIONAL)
 def delete_game(username: str) -> bool:
-    try:
-        file_path = f'games/{username}.json'
+    if check_game(username):
+        file_path = fr'games/{username}.json'
         os.remove(file_path)
         return True
-    except FileNotFoundError:
-        return False
+    return False
         
 # string -> boolean
 # Check if the player has a previous game uncontinued

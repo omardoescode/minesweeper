@@ -298,3 +298,12 @@ class Cell:
         if self.is_covered or self.val is None:
             return "X"
         return str(self.val)
+    
+    def __dict__(self):
+        return {
+            "row": self.row,
+            "column": self.column,
+            "is_flagged": self.is_flagged,
+            "is_covered": self.is_covered,
+            "val": self.val,
+        }

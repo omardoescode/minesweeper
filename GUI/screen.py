@@ -57,13 +57,7 @@ class GUI:
                     if not self.music_player.check_default_music():
                         self.music_player.play_default_music() 
                 case "PAUSE_MENU":
-                    current_page = PauseMenu(
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
-                        kwargs["board"],
-                        kwargs["state"]
-                    )
+                    current_page = PauseMenu(**kwargs)
 
                 case "DIFFICULTY":
                     current_page = Difficulty()
@@ -101,9 +95,7 @@ class GUI:
 
                     current_page = GameOver(
                         self.username,
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
+                        **kwargs
                     )
                     self.music_player.play_losing_music()
                 case "GAME_WIN":
@@ -112,9 +104,7 @@ class GUI:
 
                     current_page = GameWin(
                         self.username,
-                        kwargs["rows"],
-                        kwargs["columns"],
-                        kwargs["mines"],
+                        **kwargs
                     )
                     self.music_player.play_winning_music()
                 case "ABOUT":

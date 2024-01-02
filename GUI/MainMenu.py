@@ -1,6 +1,7 @@
 import pygame
-from GUI.gui_helpers import create_button
-from GUI.gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
+from .gui_helpers import create_button
+from .gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
+from .save_game import check_game, retrieve_game
 
 
 class MainMenu:
@@ -9,8 +10,8 @@ class MainMenu:
         self.username = username
         self.music_player = music_player
 
-        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.background = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
+        self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -82,12 +83,17 @@ class MainMenu:
         )
         self.draw_title("Minesweeper", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
         self.draw_title(
-            f"Hello, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
+            f"Dig in, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 3 + 40
         )
 
-        # Draw Buttons
+        # Check for previous game
+        if check_game(self.username):
+            continue_game = self.draw_button("Continue" ,(WIDTH // 2 - 170, HEIGHT // 3 + 40), screen, fonts)
+            self.navigation_buttons.append({"obj" :continue_game, "val": "BOARD", "kwargs": retrieve_game(self.username)})
+        # Draw Remaining Buttons
+        game_start_x_coordinate = WIDTH // 2 + 170 if check_game(self.username) else WIDTH // 2
         game_start = self.draw_button(
-            "Game Start", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
+            "New Game", (game_start_x_coordinate, HEIGHT // 3 + 40), screen, fonts
         )
         self.navigation_buttons.append(
             {"obj": game_start, "val": "DIFFICULTY", "kwargs": None}
