@@ -83,7 +83,8 @@ class GUI:
                         self.music_player,
                         self.username,
                         kwargs.get('difficulty', 'custom'),
-                        board=board
+                        board=board,
+                        initial_time=kwargs.get('initial_time', 0)
                     )
 
                     # Play the board music
