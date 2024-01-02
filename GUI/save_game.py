@@ -13,17 +13,19 @@ GameSavedObject:
     mines: int
     initial_time
     baord: Board
+    difficulty: 'easy' | 'medium' | 'hard' | 'custom'
 '''
 # string, int, int, int, Board -> ()
 # create a new file in folder games called <username>.json
 # This file has a GameSavedObject
-def store_game(username: str, rows: int, columns: int, mines: int, board: List[Cell], initial_time):
+def store_game(username: str, rows: int, columns: int, mines: int, board: List[Cell], difficulty, initial_time):
     game_data = {
         "rows": rows,
         "columns": columns,
         "mines": mines,
         "initial_time": initial_time,
-        "board": [[cell.__dict__() for cell in row] for row in board]
+        "board": [[cell.__dict__() for cell in row] for row in board],
+        "difficulty": difficulty
     }
 
     # Create the games folder if it doesn't exist
@@ -40,7 +42,7 @@ def store_game(username: str, rows: int, columns: int, mines: int, board: List[C
 # Return an empty object if there's none
 def retrieve_game(username: str) -> Optional[Dict]:
     # If the file doesn't exist, return an empty object
-    if not check_game(username): return {}
+    
 
     # If it's not, return the object
     with open(fr'games/{username}.json', 'r') as file:
