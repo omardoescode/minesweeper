@@ -93,7 +93,11 @@ class MainMenu:
             {"obj": game_start, "val": "DIFFICULTY", "kwargs": None}
         )
         # TODO: Handle the Stats functionailty
-        self.draw_button("Stats", (WIDTH // 2, HEIGHT // 3 + 160), screen, fonts)
+        stats_button = self.draw_button("Stats", (WIDTH // 2, HEIGHT // 3 + 160), screen, fonts)
+        self.navigation_buttons.append(
+            {"obj": stats_button, "val": "STATS", "kwargs": None}
+        )
+
         quit_button = self.draw_button(
             "Quit", (WIDTH // 2, HEIGHT // 3 + 280), screen, fonts
         )

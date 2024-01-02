@@ -11,6 +11,7 @@ from .CustomDifficulty import CustomDifficulty
 from .PauseMenu import PauseMenu
 from .AboutPage import AboutPage
 from .MusicPlayer import MusicPlayer
+from .Stats import Stats
 
 class GUI:
     def __init__(self):
@@ -67,6 +68,9 @@ class GUI:
                 case "DIFFICULTY":
                     current_page = Difficulty()
 
+                case 'STATS':
+                    current_page = Stats(self.username)
+
                 case "CUSTOM_DIFFICULTY":
                     current_page = CustomDifficulty()
 
@@ -83,6 +87,8 @@ class GUI:
                         kwargs["columns"],
                         kwargs["mines"],
                         self.music_player,
+                        self.username,
+                        kwargs.get('difficulty', 'custom'),
                         board=board
                     )
 

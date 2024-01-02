@@ -6,6 +6,7 @@ from GUI.flag_counter import FlagCounter
 from timer import Timer
 from GUI.MusicPlayer import MusicPlayer
 from GUI.scorer import Scorer
+from storage import save_game
 
 class GUICell:
     def __init__(
@@ -22,12 +23,15 @@ class GUICell:
         uncovered_image,
         hover_image,
         value_image,
-        flag_image,
+        flag_place_framese,
+        flag_idle_frames,
+        flag_remove_framse,
+        explosion_frames,
         cell_size,
         border_size,
         stop_input,
         flag_counter,
-        music_player
+        music_player,
     ):
         # Initlaize the cell object, saving all given parameters
         self.coordinates = coordinates
@@ -51,10 +55,20 @@ class GUICell:
         self.uncovered_image = uncovered_image
         self.hover_image = hover_image
         self.value_image = value_image
-        self.flag_image = flag_image
+        self.flag_place_framese = flag_place_framese
+        self.flag_idle_frames = flag_idle_frames
+        self.flag_remove_framse = flag_remove_framse
+        self.explosion_frames = explosion_frames
+        self.flag_green = False
+        self.explode = False
+        self.pick_flag = False
         self.stop_input = stop_input
         self.flag_counter = flag_counter
         self.music_player = music_player
+        self.flag_place_animation_frames = 0.0
+        self.flag_idle_animation_frames = 0.0
+        self.flag_pick_animation_frames = 0.0
+        self.explosion_animation_frames = 0.0
 
     # () -> ()
     # Reveal the cell. Start losing animation if it was mine
@@ -75,29 +89,80 @@ class GUICell:
         self.is_flagged = not self.is_flagged
 
         if self.is_flagged:
+            self.flag_pick_animation_frames = 0.0
             self.flag_counter.place_flag()
         else:
+            self.flag_place_animation_frames = 0.0
+            self.flag_idle_animation_frames = 0.0
+            self.pick_flag = True
             self.flag_counter.remove_flag()
 
         self.handle_flag(self.coordinates[0], self.coordinates[1])
 
     def draw_cell(self, screen):
-        pygame.draw.rect(screen, (0, 0, 0), self.rectangle)
-        if self.is_clicked:
+        pygame.draw.rect(screen, (84,84,84), self.rectangle)
+
+        if self.explode and self.value == "M":
+            if self.explode and self.explosion_animation_frames < 9.0:
+                if self.explosion_animation_frames < 3.0:
+                    screen.blit(self.uncovered_image, self.rectangle.topleft)
+                    screen.blit(
+                        self.value_image[0],
+                        self.value_image[0].get_rect(center=self.rectangle.center),
+                    )
+                else:
+                    screen.blit(
+                        self.value_image[1],
+                        self.value_image[1].get_rect(center=self.rectangle.center),
+                    )
+                screen.blit(
+                    self.explosion_frames[int(self.explosion_animation_frames)], self.explosion_frames[int(self.explosion_animation_frames)].get_rect(center=self.rectangle.center)
+                )
+                self.explosion_animation_frames+=1/5
+            else:
+                screen.blit(
+                    self.value_image[1],
+                    self.value_image[1].get_rect(center=self.rectangle.center),
+                )
+        elif self.is_clicked:
             screen.blit(self.uncovered_image, self.rectangle.topleft)
-            if self.value != 0:
+            if self.value != 0 and self.value != "M":
                 screen.blit(
                     self.value_image,
                     self.value_image.get_rect(center=self.rectangle.center),
                 )
+            elif self.value == "M":
+                screen.blit(
+                    self.value_image[0],
+                    self.value_image[0].get_rect(center=self.rectangle.center),
+                )
+
         elif self.is_flagged:
             screen.blit(self.covered_image, self.rectangle.topleft)
-            screen.blit(
-                self.flag_image, self.flag_image.get_rect(center=self.rectangle.center)
-            )
+            if self.flag_place_animation_frames < 11:
+                screen.blit(
+                    self.flag_place_framese[int(self.flag_place_animation_frames)], self.flag_place_framese[int(self.flag_place_animation_frames)].get_rect(center=self.rectangle.center)
+                )
+                self.flag_place_animation_frames+=1/3
+            else:
+                screen.blit(
+                    self.flag_idle_frames[(int(self.flag_idle_animation_frames))%6], self.flag_idle_frames[(int(self.flag_idle_animation_frames))%6].get_rect(center=self.rectangle.center)
+                )
+
+                self.flag_idle_animation_frames+=1/4
+        
+            ''' elif self.pick_flag:
+            if self.flag_pick_animation_frames < 4:
+                screen.blit(
+                        self.flag_remove_framse[int(self.flag_pick_animation_frames)], self.flag_remove_framse[int(self.flag_pick_animation_frames)].get_rect(center=self.rectangle.center)
+                    )
+                self.flag_pick_animation_frames+=1/10
+            else:
+                self.pick_flag = False 
+            '''
         else:
             screen.blit(self.covered_image, self.rectangle.topleft)
-
+        
         coords = pygame.mouse.get_pos()
         column, row = coords[0]//self.cell_size, (coords[1]-TOP_MARGIN)//self.cell_size
 
@@ -107,9 +172,8 @@ class GUICell:
             if self.is_flagged == False and self.is_clicked == False:
                 screen.blit(self.hover_image, self.rectangle.topleft)
 
-
 class Board(Game):
-    def __init__(self, rows, columns, mines, music_player, board=None, border_size=1):
+    def __init__(self, rows, columns, mines, music_player, username, difficulty, board=None, border_size=1):
         # Initilaize the inherited game object
         super().__init__(rows, columns, mines)
 
@@ -123,8 +187,10 @@ class Board(Game):
         self.music_player = music_player
         self.width = columns * self.cell_size
         self.height = rows * self.cell_size + TOP_MARGIN
-        self.cells = ['X']*(self.columns*self.rows)
+        self.cells = []
         self.screen = pygame.display.set_mode((self.width, self.height))
+        self.username = username
+        self.difficulty = difficulty
 
         # Initalize the timer
         self.timer = Timer()
@@ -157,16 +223,17 @@ class Board(Game):
             pygame.image.load("./assets/in_game_icons/board/hover-cell.png"),
             (self.cell_size - self.border_size, self.cell_size - self.border_size),
         )
-        self.flag_image = pygame.transform.scale(
-            pygame.image.load("./assets/in_game_icons/board/red-flag.png"),
-            (self.cell_size, self.cell_size),
-        )
-        self.mine_image = pygame.transform.scale(
+        self.mine_image = ['','']
+        self.mine_image[0] = pygame.transform.scale(
             pygame.image.load("./assets/in_game_icons/board/mine.png"),
             (self.cell_size, self.cell_size),
         )
-        self.value_images = []
+        self.mine_image[1] = pygame.transform.scale(
+            pygame.image.load("./assets/game-icons/exploded-cell.png"),
+            (self.cell_size, self.cell_size),
+        )
 
+        self.value_images = []
         for i in range(8):
             self.value_images.append(
                 pygame.transform.scale(
@@ -176,6 +243,52 @@ class Board(Game):
                     (self.cell_size * 0.5, self.cell_size * 0.5),
                 )
             )
+        
+        self.flag_place_images = []
+        for i in range(1, 12):
+            self.flag_place_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(f"./assets/animations/flag-place{i}.png"),
+                    (self.cell_size * 79/32, self.cell_size),
+                )
+            )
+
+        self.flag_idle_images = []
+        for i in range(2, 8):
+            self.flag_idle_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(f"./assets/animations/flag-idle ({i}).png"),
+                    (self.cell_size * 79/32, self.cell_size),
+                )
+            )
+        
+        self.flag_remove_images = []
+        for i in range(1, 5):
+            self.flag_remove_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(f"./assets/animations/flag-remove ({i}).png"),
+                    (self.cell_size * 79/32, self.cell_size),
+                )
+            )
+
+        self.green_flag_idle_images = []
+        for i in range(1, 7):
+            self.green_flag_idle_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(f"./assets/animations/flag-green ({i}).png"),
+                    (self.cell_size * 79/32, self.cell_size),
+                )
+            )
+
+        self.explosion_images = []
+        for i in range(1, 10):
+            self.explosion_images.append(
+                pygame.transform.scale(
+                    pygame.image.load(f"./assets/animations/explosion ({i}).png"),
+                    (self.cell_size, self.cell_size),
+                )
+            )
+
 
         # Load the images of the sidebar
         self.TB_flag_image = pygame.transform.scale(
@@ -188,11 +301,6 @@ class Board(Game):
             (30, 30),
         )
 
-    def handle_stop_input(self):
-        self.stop_input = True
-
-    # Draw the board
-    def draw_cells(self, screen):
         for row_index in range(len(self.board)):
             for column_index in range(len(self.board[row_index])):
                 cell_data = self.board[row_index][column_index]
@@ -218,16 +326,44 @@ class Board(Game):
                     self.uncovered_image,
                     self.hover_image,
                     image,
-                    self.flag_image,
+                    self.flag_place_images,
+                    self.flag_idle_images,
+                    self.flag_remove_images,
+                    self.explosion_images,
                     self.cell_size,
                     self.border_size,
                     self.handle_stop_input,
                     self.flag_counter,
-                    self.music_player
+                    self.music_player,
                 )
-                self.cells[row_index*self.columns + column_index] = cell
+                self.cells.append(cell)
+
+    def handle_stop_input(self):
+        self.stop_input = True
+
+    # Draw the board
+    def update_cells(self, screen):
+        pygame.draw.rect(screen, (84,84,84), (0,TOP_MARGIN,self.width,1))
+        for row_index in range(len(self.board)):
+            for column_index in range(len(self.board[row_index])):
+                cell_data = self.board[row_index][column_index]
+                if cell_data.val != None:
+                    if cell_data.val == "M":
+                        image = self.mine_image
+                    elif cell_data.val == 0:
+                        image = self.uncovered_image
+                    else:
+                        image = self.value_images[cell_data.val - 1]
+                else:
+                    image = self.uncovered_image
+                cell = self.cells[row_index*self.columns + column_index]
+                cell.value_image = image
+                cell.is_clicked = not cell_data.is_covered
+                cell.is_flagged = cell_data.is_flagged
+                cell.value = cell_data.val
+
                 cell.draw_cell(screen) 
-    
+        
     # Draw an item in the siderbar
     def draw_siderbar_item(self, screen, font, text, x, y, icon=None):
         # Assuming screen is the Pygame surface
@@ -321,21 +457,36 @@ class Board(Game):
                         cell.flag_cell()
 
             if event.type == (pygame.USEREVENT+1):
-                uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.is_clicked == False, self.cells))
+                if self.start_playing and self.check_win():
+                    uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.flag_green == False, self.cells))
+                else:
+                    uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.explode == False, self.cells))
                 if len(uncovered_mines) > 0:
-                    self.music_player.play_beep_sound(channel=len(uncovered_mines)+2)
-                    next_mine = uncovered_mines[0]
-                    row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
-                    self.board[row_index][column_index].is_flagged = False
-                    self.board[row_index][column_index].is_covered = False
+                    if self.start_playing and self.check_win():
+                        self.music_player.play_correct_sound(channel=len(uncovered_mines)+2)
+                        next_mine = uncovered_mines[0]
+                        row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
+                        self.board[row_index][column_index].is_flagged = True
+                        cell = self.cells[row_index*self.columns + column_index]
+                        cell.flag_green = True
+                        cell.flag_idle_frames = self.green_flag_idle_images
+                    else:
+                        self.music_player.play_beep_sound(channel=len(uncovered_mines)+2)
+                        next_mine = uncovered_mines[0]
+                        row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
+                        self.board[row_index][column_index].is_flagged = False
+                        self.board[row_index][column_index].is_covered = False
+                        cell = self.cells[row_index*self.columns + column_index]
+                        cell.explode= True
                     pygame.time.set_timer(pygame.USEREVENT + 1, int(250*(len(uncovered_mines)/self.mines)))
                 else:
                     pygame.time.set_timer(pygame.USEREVENT+1, 0)
-                    pygame.time.set_timer(pygame.USEREVENT+2, 1500)
+                    pygame.time.set_timer(pygame.USEREVENT+2, 2500)
 
             if event.type == pygame.USEREVENT + 2:
                 pygame.time.set_timer(pygame.USEREVENT+2, 0)
                 if self.start_playing and self.check_win():
+                    save_game(self.username, self.difficulty, 'w', self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time()), self.timer.get_elapsed_time())
                     return "GAME_WIN", {
                         "rows": self.rows,
                         "columns": self.columns,
@@ -344,6 +495,7 @@ class Board(Game):
                     }
 
                 if not self.playing:
+                    save_game(self.username, self.difficulty, 'l', self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time()), self.timer.get_elapsed_time())
                     return "GAME_LOSE", {
                         "rows": self.rows,
                         "columns": self.columns,
@@ -357,4 +509,4 @@ class Board(Game):
         screen.blit(self.background, (0, 0))
         pygame.display.set_caption("Enjoy!!!")
         self.draw_topbar(screen, fonts)
-        self.draw_cells(screen)
+        self.update_cells(screen)

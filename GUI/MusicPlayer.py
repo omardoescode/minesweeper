@@ -25,7 +25,8 @@ class MusicPlayer:
     play_board_music = lambda self: self.play_music('default.mp3', -1)
     play_dig_sound = lambda self, channel: self.play_sound(channel, './assets/music/dig.mp3')
     play_flag_sound = lambda self, channel: self.play_sound(channel, './assets/music/flag.mp3')
-    play_beep_sound = lambda self, channel: self.play_sound(channel, './assets/music/beep.mp3')
+    play_beep_sound = lambda self, channel: self.play_sound(channel, './assets/music/explode.mp3')
+    play_correct_sound = lambda self, channel: self.play_sound(channel, './assets/music/correct.mp3')
 
     # Play the effects music
     # TODO: Add the music for flagged, unflagging, digging, start of a zero_chain, and so on

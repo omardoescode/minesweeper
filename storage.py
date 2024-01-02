@@ -1,4 +1,4 @@
-# import json
+import json
 
 # username = ""
 # wins = 0
@@ -21,13 +21,13 @@
 def save_game(username,difficulty,winning,score,time_elapsed):
      with open("save_games.txt","a") as file:
           game_data = {'username':username,'difficulty':difficulty,'game state':winning,'score':score,'time elapsed':time_elapsed}
-          file.append(f"{game_data}\n")
+          file.write(f"{game_data}\n")
 
 def load_games():
      games = []
      with open("save_games.txt","r") as file:
           for line in file:
-               games.append(line.rstrip())
+               games.append(json.loads(line.rstrip().replace("'", '"')))
      return games
 
 

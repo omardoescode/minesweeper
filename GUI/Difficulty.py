@@ -51,6 +51,7 @@ class Difficulty:
                         "rows": BOARD_SIZE[dif][0],
                         "columns": BOARD_SIZE[dif][1],
                         "mines": NUMBER_OF_MINES[dif],
+                        "difficulty": dif
                     },
                 }
             )
