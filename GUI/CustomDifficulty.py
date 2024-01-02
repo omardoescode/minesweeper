@@ -111,8 +111,10 @@ class CustomDifficulty:
             # Draw the input
             pygame.draw.rect(screen, (255, 255, 255), obj)
 
-            # Draw the text
+            # Determining the value
             value = str(val) if val != "" else label.capitalize()
+
+            # Draw the text
             text_surface = fonts["md"].render(value, False, (0, 0, 0))
             text_rect = text_surface.get_rect(center=obj.center)
             screen.blit(text_surface, text_rect.topleft)

@@ -40,12 +40,12 @@ class Stats:
         )
         screen.blit(text_surface, text_rect.topleft)
 
-    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
+    def draw_small_button(self, text, position, screen, fonts, handle_click=lambda: None):
         return create_button(
-            position[0] - 150,
-            position[1] + 50,
-            300,
-            100,
+            position[0],
+            position[1],
+            120,
+            50,
             text,
             (255, 255, 255),
             SECONDARY_COLOR,
@@ -53,6 +53,7 @@ class Stats:
             screen,
             fonts,
             handle_click,
+            text_size="sm"
         )
 
     def update(self, screen, fonts):
@@ -79,8 +80,8 @@ class Stats:
         for i in range(1, len(self.top_hard) + 1):
             self.draw_title(f"{i}. {self.top_hard[i-1]['username']} {self.top_hard[i-1]['time elapsed']:.2f}s", screen, fonts["sm"], WIDTH*0.5, HEIGHT*0.5 + 50 + 50*i)
 
-        back_main_menu = self.draw_button(
-            "Main Menu", (WIDTH - 200, HEIGHT - 200), screen, fonts
+        back_main_menu = self.draw_small_button(
+            "Back", (10, 10), screen, fonts
         )
         self.navigation_buttons.append(
             {"obj": back_main_menu, "val": "MAIN_MENU", "kwargs": {}}
