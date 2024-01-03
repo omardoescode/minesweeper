@@ -90,11 +90,11 @@ class GUICell:
         self.is_flagged = not self.is_flagged
 
         if self.is_flagged:
-            self.flag_pick_animation_frames = 0.0
+            self.flag_place_animation_frames = pygame.time.get_ticks()
+            self.flag_idle_animation_frames = pygame.time.get_ticks() + 600
             self.flag_counter.place_flag()
         else:
-            self.flag_place_animation_frames = 0.0
-            self.flag_idle_animation_frames = 0.0
+            self.flag_pick_animation_frames = pygame.time.get_ticks()
             self.pick_flag = True
             self.flag_counter.remove_flag()
 
@@ -104,8 +104,8 @@ class GUICell:
         pygame.draw.rect(screen, (84,84,84), self.rectangle)
 
         if self.explode and self.value == "M":
-            if self.explode and self.explosion_animation_frames < 9.0:
-                if self.explosion_animation_frames < 3.0:
+            if self.explode and pygame.time.get_ticks() - self.explosion_animation_frames < 650:
+                if pygame.time.get_ticks() - self.explosion_animation_frames < 150:
                     screen.blit(self.uncovered_image, self.rectangle.topleft)
                     screen.blit(
                         self.value_image[0],
@@ -117,9 +117,8 @@ class GUICell:
                         self.value_image[1].get_rect(center=self.rectangle.center),
                     )
                 screen.blit(
-                    self.explosion_frames[int(self.explosion_animation_frames)], self.explosion_frames[int(self.explosion_animation_frames)].get_rect(center=self.rectangle.center)
+                    self.explosion_frames[int(8*(pygame.time.get_ticks() - self.explosion_animation_frames)/650)], self.explosion_frames[int(8*(pygame.time.get_ticks() - self.explosion_animation_frames)/650)].get_rect(center=self.rectangle.center)
                 )
-                self.explosion_animation_frames+=1/5
             else:
                 screen.blit(
                     self.value_image[1],
@@ -140,17 +139,15 @@ class GUICell:
 
         elif self.is_flagged:
             screen.blit(self.covered_image, self.rectangle.topleft)
-            if self.flag_place_animation_frames < 11:
+            if pygame.time.get_ticks() - self.flag_place_animation_frames < 600:
                 screen.blit(
-                    self.flag_place_framese[int(self.flag_place_animation_frames)], self.flag_place_framese[int(self.flag_place_animation_frames)].get_rect(center=self.rectangle.center)
+                    self.flag_place_framese[int(10*(pygame.time.get_ticks() - self.flag_place_animation_frames)/600)], self.flag_place_framese[int(10*(pygame.time.get_ticks() - self.flag_place_animation_frames)/600)].get_rect(center=self.rectangle.center)
                 )
-                self.flag_place_animation_frames+=1/3
             else:
                 screen.blit(
-                    self.flag_idle_frames[(int(self.flag_idle_animation_frames))%6], self.flag_idle_frames[(int(self.flag_idle_animation_frames))%6].get_rect(center=self.rectangle.center)
+                    self.flag_idle_frames[(int(5*(pygame.time.get_ticks() - self.flag_idle_animation_frames - 600*int((pygame.time.get_ticks() - self.flag_idle_animation_frames)/600))/600))%5], self.flag_idle_frames[(int(5*(pygame.time.get_ticks() - self.flag_idle_animation_frames - 600*int((pygame.time.get_ticks() - self.flag_idle_animation_frames)/600))/600))%5].get_rect(center=self.rectangle.center)
                 )
 
-                self.flag_idle_animation_frames+=1/4
         
             ''' elif self.pick_flag:
             if self.flag_pick_animation_frames < 4:
@@ -424,6 +421,13 @@ class Board(Game):
         )
         
     def handle_events(self):
+        
+        REVEAL_MINES_OR_FLAGS_EVENT = pygame.USEREVENT + 1
+        WIN_OR_LOSE_EVENT = pygame.USEREVENT + 2
+        
+        mine_reveal_time = 150
+        final_board_delay_time = 2500
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 # Save the game in case it was clicked while the game is over, or before it even started
@@ -465,42 +469,45 @@ class Board(Game):
                             cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
 
                             if (self.start_playing and self.check_win()) or (not self.playing):
-                                pygame.time.set_timer(pygame.USEREVENT+1, 250)
+                                pygame.time.set_timer(REVEAL_MINES_OR_FLAGS_EVENT, int(mine_reveal_time))
                                 self.stop_input = True
                                 self.timer.end()
 
                     elif event.button == 3 and not cell.is_clicked:
                         cell.flag_cell()
 
-            if event.type == (pygame.USEREVENT+1):
+            if event.type == (REVEAL_MINES_OR_FLAGS_EVENT):
                 if self.start_playing and self.check_win():
                     uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.flag_green == False, self.cells))
                 else:
                     uncovered_mines = list(filter(lambda cell: cell.value == "M" and cell.explode == False, self.cells))
                 if len(uncovered_mines) > 0:
+                
+                    next_mine = uncovered_mines[0]
+                    row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
+                    cell = self.cells[row_index*self.columns + column_index]
+
                     if self.start_playing and self.check_win():
                         self.music_player.play_correct_sound(channel=len(uncovered_mines)+2)
-                        next_mine = uncovered_mines[0]
-                        row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
                         self.board[row_index][column_index].is_flagged = True
-                        cell = self.cells[row_index*self.columns + column_index]
                         cell.flag_green = True
                         cell.flag_idle_frames = self.green_flag_idle_images
+                        cell.flag_idle_animation_frames = pygame.time.get_ticks()
                     else:
                         self.music_player.play_beep_sound(channel=len(uncovered_mines)+2)
-                        next_mine = uncovered_mines[0]
-                        row_index, column_index = next_mine.coordinates[0], next_mine.coordinates[1]
                         self.board[row_index][column_index].is_flagged = False
                         self.board[row_index][column_index].is_covered = False
-                        cell = self.cells[row_index*self.columns + column_index]
                         cell.explode= True
-                    pygame.time.set_timer(pygame.USEREVENT + 1, int(250*(len(uncovered_mines)/self.mines)))
-                else:
-                    pygame.time.set_timer(pygame.USEREVENT+1, 0)
-                    pygame.time.set_timer(pygame.USEREVENT+2, 2500)
+                        cell.explosion_animation_frames = pygame.time.get_ticks()
 
-            if event.type == pygame.USEREVENT + 2:
-                pygame.time.set_timer(pygame.USEREVENT+2, 0)
+                    pygame.time.set_timer(REVEAL_MINES_OR_FLAGS_EVENT, int(mine_reveal_time*(len(uncovered_mines)/self.mines)))
+                
+                else:
+                    pygame.time.set_timer(REVEAL_MINES_OR_FLAGS_EVENT, 0)
+                    pygame.time.set_timer(WIN_OR_LOSE_EVENT, final_board_delay_time)
+
+            if event.type == WIN_OR_LOSE_EVENT:
+                pygame.time.set_timer(WIN_OR_LOSE_EVENT, 0)
                 if self.start_playing and self.check_win():
                     save_game(self.username, self.difficulty, 'w', self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time()), self.timer.get_elapsed_time())
                     return "GAME_WIN", {
