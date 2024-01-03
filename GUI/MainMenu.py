@@ -1,6 +1,6 @@
 import pygame
 from .gui_helpers import create_button
-from .gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
+from .gui_constants import WIDTH, HEIGHT
 from .save_game import check_game, retrieve_game
 
 
@@ -26,6 +26,26 @@ class MainMenu:
         self.unmuted = pygame.transform.scale(pygame.image.load("./assets/icons/music-on-icon.png"), (50, 50))
         self.muted = pygame.transform.scale(pygame.image.load("./assets/icons/music-off-icon.png"), (50, 50))
         self.about = pygame.transform.scale(pygame.image.load("./assets/icons/aboutus-icon.png"), (50, 50))
+
+        self.buttons = [
+            {
+            "text_image": self.play_text,
+            "val": "DIFFICULTY",
+            "kwargs": {}
+            },
+            {
+            "text_image": self.stats_text,
+            "val": "STATS",
+            "kwargs": {}
+            },
+            {
+            "text_image": self.quit_text,
+            "val": "QUIT_GAME",
+            "kwargs": {}
+            },
+        ]
+        if check_game(self.username):
+            self.buttons = [{"text_image": self.continue_text, "val": "BOARD", "kwargs": retrieve_game(self.username)}] + self.buttons
 
 
     def handle_events(self):
@@ -85,31 +105,21 @@ class MainMenu:
             f"Dig in, {self.username}", screen, fonts["sm"], WIDTH / 2, HEIGHT / 5 + 60
         )
 
-        # Check for previous game
-        if check_game(self.username):
-            continue_game = self.place_button(self.btn_bg, self.continue_text, screen, WIDTH // 2, HEIGHT // 5 + 140)
-            self.navigation_buttons.append({"obj": continue_game, "val": "BOARD", "kwargs": retrieve_game(self.username)})
-        # Draw Remaining Buttons
-        game_start = self.place_button(self.btn_bg, self.play_text, screen, WIDTH // 2, HEIGHT // 5 + 260)
-        self.navigation_buttons.append(
-            {"obj": game_start, "val": "DIFFICULTY", "kwargs": None}
-        )
-        stats_button = self.place_button(self.btn_bg, self.stats_text, screen, WIDTH // 2, HEIGHT // 5 + 380)
-        self.navigation_buttons.append(
-            {"obj": stats_button, "val": "STATS", "kwargs": None}
-        )
+        
 
-        quit_button = self.place_button(self.btn_bg, self.quit_text, screen, WIDTH // 2, HEIGHT // 5 + 500)
-        self.navigation_buttons.append(
-            {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}
-        )
-    
+        n = 5
+        y = 140
+        for btn_data in self.buttons:
+            btn = self.place_button(self.btn_bg, btn_data["text_image"], screen, WIDTH // n, HEIGHT // 5 + y)
+            self.navigation_buttons.append({"obj": btn, "val": btn_data["val"], "kwargs": btn_data["kwargs"]})
+            n -= 1
+            y += 120
+        
         # Draw About Page
         about_btn = self.place_img(self.about, screen, WIDTH - 50, HEIGHT - 100)
         self.navigation_buttons.append(
             {"obj": about_btn, "val": "ABOUT", "kwargs": {}}
         )
-        
         # Draw Mute/Unmute button
-        icon = self.unmuted if self.music_player.is_muted else self.muted
+        icon = self.muted if self.music_player.is_muted else self.unmuted
         self.toggle_mute_btn = self.place_img(icon, screen, WIDTH - 50, HEIGHT - 50)

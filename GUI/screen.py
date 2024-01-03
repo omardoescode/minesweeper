@@ -33,8 +33,7 @@ class GUI:
 
     # This function handles the game with all the navigation, and playing background music
     def start_game(self):
-        self.username = "Omar"
-        current_page = MainMenu(self.username, self.music_player)
+        current_page = PlayerNamePage()
         self.music_player.play_default_music() # Start the music right away
         while self.running:
             action, kwargs = current_page.handle_events()
