@@ -1,4 +1,5 @@
 import json
+from json.decoder import JSONDecodeError
 
 # username = ""
 # wins = 0
@@ -18,16 +19,21 @@ import json
 #           self.games_played = self.loses + self.wins
 # playerinfo_JSON = '{"username":username, "wins":wins, "loses":loses, "games_played":games_played, "score":score}'
 
-def save_game(username,difficulty,winning,score,time_elapsed):
-     with open("save_games.txt","a") as file:
-          game_data = {'username':username,'difficulty':difficulty,'game state':winning,'score':score,'time elapsed':time_elapsed}
-          file.write(f"{game_data}\n")
-
 def load_games():
      games = []
-     with open("save_games.txt","r") as file:
-          for line in file:
-               games.append(json.loads(line.rstrip().replace("'", '"')))
+     try:
+          with open(rf"save_games.json","r") as file:
+               games = json.load(file)
+     except JSONDecodeError:
+          games = []
+     except FileNotFoundError:
+          games = []
+     
      return games
 
+def save_game(username,difficulty,winning,score,time_elapsed):
+     games_data = load_games()
+     with open(rf"save_games.json","w") as file:
+          game_data = {"username":username,"difficulty":difficulty,"game state":winning,"score":score,"time elapsed":time_elapsed}
+          json.dump([*games_data, game_data], file)
 

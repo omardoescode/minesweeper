@@ -33,6 +33,11 @@
   python main_cli.py
   ```
 
+## Screenshots
+
+![Main Menu](/screenshots/main_menu.png)
+![Game Running](/screenshots/game_running.png)
+
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.

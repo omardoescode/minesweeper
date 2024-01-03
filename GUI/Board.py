@@ -497,7 +497,7 @@ class Board(Game):
                         self.music_player.play_beep_sound(channel=len(uncovered_mines)+2)
                         self.board[row_index][column_index].is_flagged = False
                         self.board[row_index][column_index].is_covered = False
-                        cell.explode= True
+                        cell.explode = True
                         cell.explosion_animation_frames = pygame.time.get_ticks()
 
                     pygame.time.set_timer(REVEAL_MINES_OR_FLAGS_EVENT, int(mine_reveal_time*(len(uncovered_mines)/self.mines)))
