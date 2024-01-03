@@ -21,8 +21,8 @@ class MusicPlayer:
         
     play_default_music = lambda self: self.play_music('default.mp3', -1)
     play_winning_music = lambda self: self.play_music('game_victory.mp3')
-    play_losing_music = lambda self: self.play_music('default.mp3', -1)
-    play_board_music = lambda self: self.play_music('default.mp3', -1)
+    play_losing_music = lambda self: self.play_music('losing.mp3', -1)
+    play_board_music = lambda self: self.play_music('board.mp3', -1)
     play_dig_sound = lambda self, channel: self.play_sound(channel, './assets/music/dig.mp3')
     play_flag_sound = lambda self, channel: self.play_sound(channel, './assets/music/flag.mp3')
     play_beep_sound = lambda self, channel: self.play_sound(channel, './assets/music/explode.mp3')

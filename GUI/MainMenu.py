@@ -100,7 +100,7 @@ class MainMenu:
         screen.blit(bg, bg_rect.topleft)
         screen.blit(text, text_rect.topleft)
 
-        return bg_rect
+        return text_rect
     
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
