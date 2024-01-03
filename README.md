@@ -25,7 +25,7 @@
 - To start the GUI version
 
   ```sh
-  python main_gui.py
+  python main.py
   ```
 
 - To start the CLI version

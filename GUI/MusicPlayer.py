@@ -11,7 +11,7 @@ class MusicPlayer:
     # string -> ()
     # An abstract function for running any music infinitely, given its filename, and the number of loops
     # -1 means infinitely
-    def play_music(self, filename, loops):
+    def play_music(self, filename, loops=1):
         pygame.mixer.music.load(fr'./assets/music/{filename}')
         pygame.mixer.music.play(loops, 0)
         self.running_music = filename
@@ -20,7 +20,7 @@ class MusicPlayer:
     # TODO: Change these paths to the proper paths once created
         
     play_default_music = lambda self: self.play_music('default.mp3', -1)
-    play_winning_music = lambda self: self.play_music('default.mp3', -1)
+    play_winning_music = lambda self: self.play_music('game_victory.mp3')
     play_losing_music = lambda self: self.play_music('default.mp3', -1)
     play_board_music = lambda self: self.play_music('default.mp3', -1)
     play_dig_sound = lambda self, channel: self.play_sound(channel, './assets/music/dig.mp3')
@@ -29,9 +29,6 @@ class MusicPlayer:
     play_correct_sound = lambda self, channel: self.play_sound(channel, './assets/music/correct.mp3')
 
     # Play the effects music
-    # TODO: Add the music for flagged, unflagging, digging, start of a zero_chain, and so on
-    # TODO: They all must be of loops=1
-
     def play_sound(self,channel, path, loop=0):
         pygame.mixer.Channel(channel).play(pygame.mixer.Sound(path), loops=loop)
 

@@ -12,6 +12,16 @@ class GameWin:
         self.columns = columns
         self.mines = mines
         self.difficulty = difficulty
+        
+        # Load the images
+        self.background = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
+        self.title_image = pygame.transform.scale(pygame.image.load("./assets/text/you-won.png"), (350, 100))
+        self.btn_bg = pygame.transform.scale(pygame.image.load("./assets/buttons/menu_butt1.png"), (300, 200))
+
+        self.restart_text = pygame.transform.scale(pygame.image.load("./assets/text/play-again.png"), (200, 50))
+        self.back_text = pygame.transform.scale(pygame.image.load("./assets/text/back.png"), (100, 50))
+        self.quit_text = pygame.transform.scale(pygame.image.load("./assets/text/quit.png"), (150, 50))
+
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -48,22 +58,32 @@ class GameWin:
             handle_click,
         )
 
+    def place_img(self, img, screen, x, y):
+        img_rect = img.get_rect(center=(x, y))
+        screen.blit(img, img_rect.topleft)
+    
+    def place_button(self, bg, text, screen, x, y):
+        bg_rect = bg.get_rect(center=(x, y))
+        text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
+        screen.blit(bg, bg_rect.topleft)
+        screen.blit(text, text_rect.topleft)
+
+        return bg_rect
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.fill((255, 255, 255))
+        screen.blit(self.background, (0, 0))
 
-        self.draw_title("You Won!", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
+        # self.draw_title("You Won!", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
+        self.place_img(self.title_image, screen, WIDTH // 2, HEIGHT / 5)
         self.draw_title(
             f"Congratulations, {self.username}",
             screen,
             fonts["sm"],
             WIDTH / 2,
-            HEIGHT / 3 + 40,
+            HEIGHT / 5 + 70,
         )
 
-        game_start = self.draw_button(
-            "Restart", (WIDTH // 2, HEIGHT // 3 + 40), screen, fonts
-        )
+        game_start = self.place_button(self.btn_bg, self.restart_text, screen, WIDTH // 2, HEIGHT // 5 + 180)
         self.navigation_buttons.append(
             {
                 "obj": game_start,
@@ -76,15 +96,11 @@ class GameWin:
                 },
             }
         )
-        back_main_menu = self.draw_button(
-            "Main Menu", (WIDTH // 2, HEIGHT // 3 + 160), screen, fonts
-        )
+        back_main_menu = self.place_button(self.btn_bg, self.back_text, screen, WIDTH // 2, HEIGHT // 5 + 300)
         self.navigation_buttons.append(
             {"obj": back_main_menu, "val": "MAIN_MENU", "kwargs": {}}
         )
-        quit_button = self.draw_button(
-            "Quit", (WIDTH // 2, HEIGHT // 3 + 280), screen, fonts
-        )
+        quit_button = self.place_button(self.btn_bg, self.quit_text, screen, WIDTH // 2, HEIGHT // 5 + 420)
         self.navigation_buttons.append(
             {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}
         )

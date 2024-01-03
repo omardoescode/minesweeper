@@ -9,6 +9,7 @@ def validate_coordinates(row, column, board_size):
 
 
 # (type, string) -> type
+# Take an input from the user, convert it to input_type, and make sure its value as an argument to preidcate is True
 def validate_input(input_type, input_string, predicate=lambda _: True):
     try:
         val = input_type(input(input_string))
@@ -22,18 +23,16 @@ def validate_input(input_type, input_string, predicate=lambda _: True):
         return validate_input(input_type, input_string, predicate)
 
 
+# (T -> bool) (listof T) -> True
+# return true if func(x) is true for all x in lst
 def every(func, lst):
     if lst == []:
         return True
     return func(lst[0]) and every(func, lst[1:])
 
 
-def some(func, lst):
-    if lst == []:
-        return False
-    return func(lst[0]) or some(func, lst[1:])
-
-
+# (listof (listof (listof ... T))) -> (listof T)
+# Make all the nested lists within a list a non-listed list
 def flat(lst):
     if not lst:  # lst is empty
         return []

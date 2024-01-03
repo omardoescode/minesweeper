@@ -31,7 +31,7 @@ class CustomDifficulty:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "quit_game", None
+                return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # Handle Submit Click
                 if self.submit_button.collidepoint(event.pos):
@@ -117,7 +117,7 @@ class CustomDifficulty:
             elif is_active:
                 value = val
             else:
-                value = label 
+                value = label.capitalize()
 
             # Draw the text
             text_surface = fonts["md"].render(value, False, (0, 0, 0))

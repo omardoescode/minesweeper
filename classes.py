@@ -27,7 +27,7 @@ class Game:
         self.board = []
         self.playing = True
         self.start_playing = False
-
+    
         for row in range(rows):
             self.board.append([])  # a new row
             for column in range(columns):
