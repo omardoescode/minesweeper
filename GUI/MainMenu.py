@@ -19,7 +19,7 @@ class MainMenu:
         self.btn_bg = pygame.transform.scale(pygame.image.load("./assets/buttons/menu_butt1.png"), (300, 200))
 
         self.play_text = pygame.transform.scale(pygame.image.load("./assets/text/play.png"), (100, 50))
-        self.continue_text = pygame.transform.scale(pygame.image.load("./assets/text/resume.png"), (200, 50))
+        self.continue_text = pygame.transform.scale(pygame.image.load("./assets/text/continue.png"), (200, 50))
         self.stats_text = pygame.transform.scale(pygame.image.load("./assets/text/stats.png"), (150, 50))
         self.quit_text = pygame.transform.scale(pygame.image.load("./assets/text/quit.png"), (150, 50))
 
