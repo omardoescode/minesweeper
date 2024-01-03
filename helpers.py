@@ -1,4 +1,4 @@
-import termcolor
+from termcolor import colored
 
 
 # (int, int) (int, int) -> boolean
