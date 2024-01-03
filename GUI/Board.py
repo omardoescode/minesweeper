@@ -177,7 +177,6 @@ class Board(Game):
     def __init__(self, rows, columns, mines, music_player, username, difficulty, board=None, initial_time=0, border_size=1):
         # Initilaize the inherited game object
         super().__init__(rows, columns, mines)
-        print(difficulty)
 
         # Initilaize the object
         self.title_text = "board"
