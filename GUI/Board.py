@@ -70,8 +70,8 @@ class GUICell:
         self.flag_pick_animation_frames = 0.0
         self.explosion_animation_frames = 0.0
 
-    # () -> ()
-    # Reveal the cell. Start losing animation if it was mine
+        # () -> ()
+        # Reveal the cell. Start losing animation if it was mine
     def reveal_cell(self):
         self.music_player.play_dig_sound(channel=1)
         self.handle_click(self.coordinates[0], self.coordinates[1])

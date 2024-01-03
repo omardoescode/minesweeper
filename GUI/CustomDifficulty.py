@@ -112,7 +112,12 @@ class CustomDifficulty:
             pygame.draw.rect(screen, (255, 255, 255), obj)
 
             # Determining the value
-            value = str(val) if val != "" else label.capitalize()
+            if str(val) != "":
+                value = str(val)
+            elif is_active:
+                value = val
+            else:
+                value = label 
 
             # Draw the text
             text_surface = fonts["md"].render(value, False, (0, 0, 0))
