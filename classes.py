@@ -1,7 +1,23 @@
 from helpers import validate_coordinates, every, flat, print_colored, validate_input
 from constants import COORDINATES_TRANSITIONS, VALUE_COLORS
 import random
-from GUI.flag_counter import FlagCounter
+
+
+"""
+Game:
+    board_size: (int, int)
+    mines: int
+    board: (listof (listof Cell))
+    playing: boolean -  True when the game starts
+    start_playing: boolean - True when the player clicks for the first time, helps generates the board
+
+Cell:
+    row: int
+    column: int
+    val: [0:8] | "M" | None (None when game not started, "M" for mine , (0-8) for the number value)
+    is_flagged: boolean
+    is_covered: boolean
+"""
 
 
 class Game:
@@ -41,9 +57,9 @@ class Game:
     # return true if all the cells that have numbers have been uncovered
     def check_win(self):
         def check_cell(cell):
-            return (
-                (type(cell.val) == int and not cell.is_covered) or type(cell.val) != int
-            )
+            return (type(cell.val) == int and not cell.is_covered) or type(
+                cell.val
+            ) != int
 
         return every(check_cell, flat(self.board))
 
@@ -179,6 +195,7 @@ class Game:
         )
 
     # int, int -> void
+    # If the cell clicked has the same number of flagged around as the number on it, uncover the remaining cells
     def chord(self, row, column):
         if self.check_chordable(row, column):
             neighboring_cells = self.neighboring_cells(row, column)
@@ -265,16 +282,16 @@ class Game:
 
         # Print Bottom Border
         print("----" * (columns + 1))
-    
+
     # () -> int
     # return the number of cells where is_covered=False and not a mine
     def get_revealed_cells(self):
         count = 0
-        
+
         for cell in flat(self.board):
             if cell.is_covered == False and cell.val != "M":
                 count += 1
-        
+
         return count
 
 
@@ -298,7 +315,7 @@ class Cell:
         if self.is_covered or self.val is None:
             return "X"
         return str(self.val)
-    
+
     def __dict__(self):
         return {
             "row": self.row,

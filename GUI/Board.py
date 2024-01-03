@@ -1,10 +1,9 @@
 import pygame
 from classes import Game
-from GUI.gui_constants import PRIMARY_COLOR, TOP_MARGIN, SECONDARY_COLOR
+from GUI.gui_constants import TOP_MARGIN, SECONDARY_COLOR
 from GUI.gui_helpers import calculate_cell_size, create_button 
 from GUI.flag_counter import FlagCounter
 from timer import Timer
-from GUI.MusicPlayer import MusicPlayer
 from GUI.scorer import Scorer
 from storage import save_game
 from .save_game import store_game, delete_game
@@ -174,6 +173,7 @@ class Board(Game):
     def __init__(self, rows, columns, mines, music_player, username, difficulty, board=None, initial_time=0, border_size=1):
         # Initilaize the inherited game object
         super().__init__(rows, columns, mines)
+        print(difficulty)
 
         # Initilaize the object
         self.title_text = "board"
@@ -432,7 +432,7 @@ class Board(Game):
             if event.type == pygame.QUIT:
                 # Save the game in case it was clicked while the game is over, or before it even started
                 if self.playing:
-                    store_game(self.username, self.rows, self.columns, self.mines, self.board, self.timer.get_elapsed_time())
+                    store_game(self.username, self.rows, self.columns, self.mines, self.board, self.difficulty, self.timer.get_elapsed_time())
                 
                 # Use Navigation & Quit the game
                 return "QUIT_GAME", None
@@ -450,10 +450,10 @@ class Board(Game):
                     
                     # Save the game in case it was clicked while the game is over, or before it even started
                     if self.playing and self.start_playing:
-                        store_game(self.username, self.rows, self.columns, self.mines, self.board, self.timer.get_elapsed_time())
+                        store_game(self.username, self.rows, self.columns, self.mines, self.board, self.difficulty, self.timer.get_elapsed_time())
                     
                     # Navigate to pause menu
-                    return "PAUSE_MENU", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state, "initial_time": self.timer.get_elapsed_time()}
+                    return "PAUSE_MENU", {"rows": self.rows, "columns": self.columns, "mines": self.mines, "board": self.board, "state": state, "difficulty": self.difficulty,"initial_time": self.timer.get_elapsed_time()}
 
             # Handle clicking on cells
             if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
@@ -514,6 +514,7 @@ class Board(Game):
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
+                        "difficulty": self.difficulty,
                     }
 
                 if not self.playing:
@@ -522,6 +523,7 @@ class Board(Game):
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
+                        "difficulty": self.difficulty,
                     }
             
         return None, None

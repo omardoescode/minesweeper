@@ -4,13 +4,14 @@ from GUI.gui_helpers import create_button
 
 
 class GameOver:
-    def __init__(self, username, rows, columns, mines):
+    def __init__(self, username, rows, columns, mines, difficulty):
         self.title_text = "You Lost!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
         self.rows = rows
         self.columns = columns
         self.mines = mines
+        self.difficulty = difficulty
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -71,6 +72,7 @@ class GameOver:
                     "rows": self.rows,
                     "columns": self.columns,
                     "mines": self.mines,
+                    "difficulty": self.difficulty
                 },
             }
         )

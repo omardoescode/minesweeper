@@ -18,6 +18,7 @@ class Difficulty:
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
+                        print(btn["kwargs"])
                         return btn["val"], btn["kwargs"]
         return None, None
 

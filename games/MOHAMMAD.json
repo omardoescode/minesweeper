@@ -2,7 +2,7 @@
   "rows": 8,
   "columns": 8,
   "mines": 10,
-  "initial_time": 10.308034181594849,
+  "initial_time": 3.856419086456299,
   "board": [
     [
       {
@@ -10,267 +10,267 @@
         "column": 0,
         "is_flagged": false,
         "is_covered": true,
-        "val": 0
+        "val": 1
       },
       {
         "row": 0,
         "column": 1,
         "is_flagged": false,
         "is_covered": true,
-        "val": 0
+        "val": 2
       },
       {
         "row": 0,
         "column": 2,
         "is_flagged": false,
         "is_covered": true,
-        "val": 0
+        "val": 2
       },
       {
         "row": 0,
-        "column": 3,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      },
-      {
-        "row": 0,
-        "column": 4,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      },
-      {
-        "row": 0,
-        "column": 5,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      },
-      {
-        "row": 0,
-        "column": 6,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      },
-      {
-        "row": 0,
-        "column": 7,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      }
-    ],
-    [
-      {
-        "row": 1,
-        "column": 0,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      },
-      {
-        "row": 1,
-        "column": 1,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      },
-      {
-        "row": 1,
-        "column": 2,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      },
-      {
-        "row": 1,
-        "column": 3,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      },
-      {
-        "row": 1,
-        "column": 4,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 0
-      },
-      {
-        "row": 1,
-        "column": 5,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      },
-      {
-        "row": 1,
-        "column": 6,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      },
-      {
-        "row": 1,
-        "column": 7,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      }
-    ],
-    [
-      {
-        "row": 2,
-        "column": 0,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 1
-      },
-      {
-        "row": 2,
-        "column": 1,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 2,
-        "column": 2,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": "M"
-      },
-      {
-        "row": 2,
-        "column": 3,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 2,
-        "column": 4,
-        "is_flagged": false,
-        "is_covered": false,
-        "val": 1
-      },
-      {
-        "row": 2,
-        "column": 5,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 2,
-        "column": 6,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": "M"
-      },
-      {
-        "row": 2,
-        "column": 7,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      }
-    ],
-    [
-      {
-        "row": 3,
-        "column": 0,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 3,
-        "column": 1,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": "M"
-      },
-      {
-        "row": 3,
-        "column": 2,
-        "is_flagged": true,
-        "is_covered": true,
-        "val": 3
-      },
-      {
-        "row": 3,
-        "column": 3,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 3,
-        "column": 4,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": "M"
-      },
-      {
-        "row": 3,
-        "column": 5,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 3
-      },
-      {
-        "row": 3,
-        "column": 6,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 3
-      },
-      {
-        "row": 3,
-        "column": 7,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": "M"
-      }
-    ],
-    [
-      {
-        "row": 4,
-        "column": 0,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 4,
-        "column": 1,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": "M"
-      },
-      {
-        "row": 4,
-        "column": 2,
-        "is_flagged": false,
-        "is_covered": true,
-        "val": 2
-      },
-      {
-        "row": 4,
         "column": 3,
         "is_flagged": false,
         "is_covered": false,
         "val": 1
       },
       {
-        "row": 4,
+        "row": 0,
         "column": 4,
         "is_flagged": false,
         "is_covered": true,
         "val": 1
+      },
+      {
+        "row": 0,
+        "column": 5,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
+      },
+      {
+        "row": 0,
+        "column": 6,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 1
+      },
+      {
+        "row": 0,
+        "column": 7,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 0
+      }
+    ],
+    [
+      {
+        "row": 1,
+        "column": 0,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 2
+      },
+      {
+        "row": 1,
+        "column": 1,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
+      },
+      {
+        "row": 1,
+        "column": 2,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
+      },
+      {
+        "row": 1,
+        "column": 3,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 1,
+        "column": 4,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 1,
+        "column": 5,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 1,
+        "column": 6,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 1,
+        "column": 7,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 0
+      }
+    ],
+    [
+      {
+        "row": 2,
+        "column": 0,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
+      },
+      {
+        "row": 2,
+        "column": 1,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 3
+      },
+      {
+        "row": 2,
+        "column": 2,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 2
+      },
+      {
+        "row": 2,
+        "column": 3,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 2,
+        "column": 4,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 0
+      },
+      {
+        "row": 2,
+        "column": 5,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 0
+      },
+      {
+        "row": 2,
+        "column": 6,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 2,
+        "column": 7,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 1
+      }
+    ],
+    [
+      {
+        "row": 3,
+        "column": 0,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 2
+      },
+      {
+        "row": 3,
+        "column": 1,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 2
+      },
+      {
+        "row": 3,
+        "column": 2,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 0
+      },
+      {
+        "row": 3,
+        "column": 3,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 3,
+        "column": 4,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 1
+      },
+      {
+        "row": 3,
+        "column": 5,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 2
+      },
+      {
+        "row": 3,
+        "column": 6,
+        "is_flagged": false,
+        "is_covered": false,
+        "val": 2
+      },
+      {
+        "row": 3,
+        "column": 7,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
+      }
+    ],
+    [
+      {
+        "row": 4,
+        "column": 0,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
+      },
+      {
+        "row": 4,
+        "column": 1,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 1
+      },
+      {
+        "row": 4,
+        "column": 2,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 0
+      },
+      {
+        "row": 4,
+        "column": 3,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": 1
+      },
+      {
+        "row": 4,
+        "column": 4,
+        "is_flagged": false,
+        "is_covered": true,
+        "val": "M"
       },
       {
         "row": 4,
@@ -300,21 +300,21 @@
         "column": 0,
         "is_flagged": false,
         "is_covered": true,
-        "val": 2
+        "val": 1
       },
       {
         "row": 5,
         "column": 1,
         "is_flagged": false,
         "is_covered": true,
-        "val": 2
+        "val": 1
       },
       {
         "row": 5,
         "column": 2,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": 0
       },
       {
         "row": 5,
@@ -334,7 +334,7 @@
         "row": 5,
         "column": 5,
         "is_flagged": false,
-        "is_covered": true,
+        "is_covered": false,
         "val": 2
       },
       {
@@ -342,14 +342,14 @@
         "column": 6,
         "is_flagged": false,
         "is_covered": true,
-        "val": 2
+        "val": 1
       },
       {
         "row": 5,
         "column": 7,
         "is_flagged": false,
         "is_covered": true,
-        "val": 2
+        "val": 1
       }
     ],
     [
@@ -358,14 +358,14 @@
         "column": 0,
         "is_flagged": false,
         "is_covered": true,
-        "val": "M"
+        "val": 0
       },
       {
         "row": 6,
         "column": 1,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": 0
       },
       {
         "row": 6,
@@ -386,14 +386,14 @@
         "column": 4,
         "is_flagged": false,
         "is_covered": true,
-        "val": "M"
+        "val": 2
       },
       {
         "row": 6,
         "column": 5,
-        "is_flagged": true,
+        "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": 2
       },
       {
         "row": 6,
@@ -407,7 +407,7 @@
         "column": 7,
         "is_flagged": false,
         "is_covered": true,
-        "val": "M"
+        "val": 0
       }
     ],
     [
@@ -416,14 +416,14 @@
         "column": 0,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": 0
       },
       {
         "row": 7,
         "column": 1,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": 0
       },
       {
         "row": 7,
@@ -444,14 +444,14 @@
         "column": 4,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": "M"
       },
       {
         "row": 7,
         "column": 5,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": "M"
       },
       {
         "row": 7,
@@ -465,8 +465,9 @@
         "column": 7,
         "is_flagged": false,
         "is_covered": true,
-        "val": 1
+        "val": 0
       }
     ]
-  ]
+  ],
+  "difficulty": "easy"
 }
