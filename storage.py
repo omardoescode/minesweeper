@@ -1,4 +1,4 @@
-import json
+import json, os
 
 # username = ""
 # wins = 0
@@ -25,9 +25,14 @@ def save_game(username,difficulty,winning,score,time_elapsed):
 
 def load_games():
      games = []
-     with open("save_games.txt","r") as file:
-          for line in file:
-               games.append(json.loads(line.rstrip().replace("'", '"')))
+     if check_past_games():
+          with open("save_games.txt","r") as file:
+               for line in file:
+                    games.append(json.loads(line.rstrip().replace("'", '"')))
      return games
 
+# () -> Boolean
+# check for the existence of the file "saved_game.json"
+def check_past_games():
+     return os.path.exists("saved_game.json")
 
