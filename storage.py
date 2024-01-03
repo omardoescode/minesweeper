@@ -19,6 +19,7 @@ from json.decoder import JSONDecodeError
 #           self.games_played = self.loses + self.wins
 # playerinfo_JSON = '{"username":username, "wins":wins, "loses":loses, "games_played":games_played, "score":score}'
 
+# If a save_games.json file exists, load the data in it and return it. Otherwise, return an empty list
 def load_games():
      games = []
      try:
@@ -31,6 +32,7 @@ def load_games():
      
      return games
 
+# If a save_games.json file exist, load the data in it and concatenate it to the new data. Then write all the data to save_games.json
 def save_game(username,difficulty,winning,score,time_elapsed):
      games_data = load_games()
      with open(rf"save_games.json","w") as file:
