@@ -35,21 +35,6 @@ class Difficulty:
                         return btn["val"], btn["kwargs"]
         return None, None
 
-    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
-        return create_button(
-            position[0] - 150,
-            position[1],
-            300,
-            100,
-            text,
-            (255, 255, 255),
-            SECONDARY_COLOR,
-            (0, 0, 0),
-            screen,
-            fonts,
-            handle_click,
-        )
-
     def place_button(self, bg, text, screen, x, y):
         bg_rect = bg.get_rect(center=(x, y))
         text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))

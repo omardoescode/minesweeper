@@ -17,8 +17,6 @@ class MusicPlayer:
         self.running_music = filename
             
     # Play the music
-    # TODO: Change these paths to the proper paths once created
-        
     play_default_music = lambda self: self.play_music('default.mp3', -1)
     play_winning_music = lambda self: self.play_music('game_victory.mp3')
     play_losing_music = lambda self: self.play_music('losing.mp3', -1)

@@ -56,38 +56,6 @@ class MainMenu:
         )
         screen.blit(text_surface, text_rect.topleft)
 
-    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
-        return create_button(
-            position[0] - 150,
-            position[1] + 50,
-            300,
-            100,
-            text,
-            (255, 255, 255),
-            SECONDARY_COLOR,
-            (0, 0, 0),
-            screen,
-            fonts,
-            handle_click,
-        )
-    
-    def draw_small_button(self, text, position, screen, fonts, handle_click=lambda: None):
-        return create_button(
-            position[0] - 60,
-            position[1] + 25,
-            120,
-            50,
-            text,
-            (255, 255, 255),
-            SECONDARY_COLOR,
-            (0, 0, 0),
-            screen,
-            fonts,
-            handle_click,
-            text_size="sm"
-        )
-    
-
     def place_img(self, img, screen, x, y):
         img_rect = img.get_rect(center=(x, y))
         screen.blit(img, img_rect.topleft)
@@ -126,15 +94,11 @@ class MainMenu:
         self.navigation_buttons.append(
             {"obj": game_start, "val": "DIFFICULTY", "kwargs": None}
         )
-        # stats_button = self.draw_button("Stats", (WIDTH // 2, HEIGHT // 5 + 160), screen, fonts)
         stats_button = self.place_button(self.btn_bg, self.stats_text, screen, WIDTH // 2, HEIGHT // 5 + 380)
         self.navigation_buttons.append(
             {"obj": stats_button, "val": "STATS", "kwargs": None}
         )
 
-        # quit_button = self.draw_button(
-        #     "Quit", (WIDTH // 2, HEIGHT // 5 + 280), screen, fonts
-        # )
         quit_button = self.place_button(self.btn_bg, self.quit_text, screen, WIDTH // 2, HEIGHT // 5 + 500)
         self.navigation_buttons.append(
             {"obj": quit_button, "val": "QUIT_GAME", "kwargs": {}}

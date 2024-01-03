@@ -43,21 +43,6 @@ class GameWin:
         )
         screen.blit(text_surface, text_rect.topleft)
 
-    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
-        return create_button(
-            position[0] - 150,
-            position[1] + 50,
-            300,
-            100,
-            text,
-            (255, 255, 255),
-            SECONDARY_COLOR,
-            (0, 0, 0),
-            screen,
-            fonts,
-            handle_click,
-        )
-
     def place_img(self, img, screen, x, y):
         img_rect = img.get_rect(center=(x, y))
         screen.blit(img, img_rect.topleft)
