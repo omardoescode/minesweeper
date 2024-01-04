@@ -24,6 +24,10 @@ class MainMenu:
             pygame.image.load("./assets/buttons/menu_butt1.png"),
             self.button_coordinates,
         )
+        self.btn_bg_hover = pygame.transform.scale(
+            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
+            self.button_coordinates,
+        )
 
         self.play_text = pygame.transform.scale(
             pygame.image.load("./assets/text/play.png"), (100, 50)
@@ -84,7 +88,7 @@ class MainMenu:
             # Check if clicking buttons
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.buttons:
-                    if self.check_button_click(event.pos, btn):
+                    if self.check_button_hover(event.pos, btn):
                         return btn["val"], btn["kwargs"]
                 for btn in self.navigation_buttons:
                     if btn["obj"].collidepoint(event.pos):
@@ -96,7 +100,7 @@ class MainMenu:
 
         return None, None
 
-    def check_button_click(self, click_coords, btn_data):
+    def check_button_hover(self, click_coords, btn_data):
         x, y = click_coords
         btn_x = btn_data["x"]
         btn_y = btn_data["y"]
@@ -122,10 +126,12 @@ class MainMenu:
 
         return img_rect
 
-    def place_button(self, bg, text, screen, x, y):
+    def place_button(self, bg, bg_hover, text, screen, x, y):
         bg_rect = bg.get_rect(center=(x, y))
         text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
-        screen.blit(bg, bg_rect.topleft)
+        is_hovered = self.check_button_hover(pygame.mouse.get_pos(), {"x": x, "y": y})
+        img = bg_hover if is_hovered else bg
+        screen.blit(img, bg_rect.topleft)
         screen.blit(text, text_rect.topleft)
 
         return text_rect
@@ -145,6 +151,7 @@ class MainMenu:
         for btn_data in self.buttons:
             self.place_button(
                 self.btn_bg,
+                self.btn_bg_hover,
                 btn_data["text_image"],
                 screen,
                 btn_data["x"],

@@ -1,6 +1,5 @@
 import pygame
-from GUI.gui_constants import SECONDARY_COLOR, WIDTH, HEIGHT
-from GUI.gui_helpers import create_button
+from GUI.gui_constants import WIDTH, HEIGHT
 
 
 class GameWin:
@@ -25,6 +24,10 @@ class GameWin:
             pygame.image.load("./assets/buttons/menu_butt1.png"),
             self.button_coordinates,
         )
+        self.btn_bg = pygame.transform.scale(
+            pygame.image.load("./assets/buttons/menu_butt1.png"),
+            self.button_coordinates,
+        )
 
         self.restart_text = pygame.transform.scale(
             pygame.image.load("./assets/text/play-again.png"), (200, 50)
@@ -42,7 +45,7 @@ class GameWin:
                 return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
-                    if self.check_button_click(event.pos, btn):
+                    if self.check_button_hover(event.pos, btn):
                         return btn["val"], btn["kwargs"]
         return None, None
 
@@ -56,7 +59,7 @@ class GameWin:
         )
         screen.blit(text_surface, text_rect.topleft)
 
-    def check_button_click(self, click_coords, btn_data):
+    def check_button_hover(self, click_coords, btn_data):
         x, y = click_coords
         btn_x = btn_data["x"]
         btn_y = btn_data["y"]
@@ -70,10 +73,12 @@ class GameWin:
         img_rect = img.get_rect(center=(x, y))
         screen.blit(img, img_rect.topleft)
 
-    def place_button(self, bg, text, screen, x, y):
+    def place_button(self, bg, bg_hover, text, screen, x, y):
         bg_rect = bg.get_rect(center=(x, y))
         text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
-        screen.blit(bg, bg_rect.topleft)
+        is_hovered = self.check_button_hover(pygame.mouse.get_pos(), {"x": x, "y": y})
+        img = bg_hover if is_hovered else bg
+        screen.blit(img, bg_rect.topleft)
         screen.blit(text, text_rect.topleft)
 
         return bg_rect
@@ -93,7 +98,12 @@ class GameWin:
         )
 
         game_start = self.place_button(
-            self.btn_bg, self.restart_text, screen, WIDTH // 2, HEIGHT // 5 + 180
+            self.btn_bg,
+            self.btn_bg_hover,
+            self.restart_text,
+            screen,
+            WIDTH // 2,
+            HEIGHT // 5 + 180,
         )
         self.navigation_buttons.append(
             {
@@ -111,6 +121,7 @@ class GameWin:
         )
         back_main_menu = self.place_button(
             self.btn_bg,
+            self.btn_bg_hover,
             self.back_text,
             screen,
             WIDTH // 2,
@@ -126,7 +137,12 @@ class GameWin:
             }
         )
         quit_button = self.place_button(
-            self.btn_bg, self.quit_text, screen, WIDTH // 2, HEIGHT // 5 + 420
+            self.btn_bg,
+            self.btn_bg_hover,
+            self.quit_text,
+            screen,
+            WIDTH // 2,
+            HEIGHT // 5 + 420,
         )
         self.navigation_buttons.append(
             {

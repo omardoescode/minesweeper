@@ -18,6 +18,10 @@ class Difficulty:
             pygame.image.load("./assets/buttons/menu_butt1.png"),
             self.button_coordinates,
         )
+        self.btn_bg_hover = pygame.transform.scale(
+            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
+            self.button_coordinates,
+        )
         # self.btn_bg_hovered = pygame.transform.scale(pygame.image.load("./assets/buttons/menu_butt1_hover.png"), (200, 100))
 
         self.texts = {
@@ -44,19 +48,19 @@ class Difficulty:
                 return "QUIT_GAME", None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
-                    if self.check_button_click(event.pos, btn):
+                    if self.check_button_hover(event.pos, btn):
                         return btn["val"], btn["kwargs"]
         return None, None
 
-    def place_button(self, bg, text, screen, x, y):
+    def place_button(self, bg, bg_hover, text, screen, x, y):
         bg_rect = bg.get_rect(center=(x, y))
         text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
-        screen.blit(bg, bg_rect.topleft)
+        is_hovered = self.check_button_hover(pygame.mouse.get_pos(), {"x": x, "y": y})
+        img = bg_hover if is_hovered else bg
+        screen.blit(img, bg_rect.topleft)
         screen.blit(text, text_rect.topleft)
 
-        return bg_rect
-
-    def check_button_click(self, click_coords, btn_data):
+    def check_button_hover(self, click_coords, btn_data):
         x, y = click_coords
         btn_x = btn_data["x"]
         btn_y = btn_data["y"]
@@ -72,7 +76,9 @@ class Difficulty:
 
         y = 120
         for dif in DIFFICULTIES.values():
-            btn = self.place_button(self.btn_bg, self.texts[dif], screen, WIDTH // 2, y)
+            btn = self.place_button(
+                self.btn_bg, self.btn_bg_hover, self.texts[dif], screen, WIDTH // 2, y
+            )
             self.navigation_buttons.append(
                 {
                     "obj": btn,
@@ -89,7 +95,7 @@ class Difficulty:
             )
             y += 120
         custom_difficulty_button = self.place_button(
-            self.btn_bg, self.custom_text, screen, WIDTH // 2, y
+            self.btn_bg, self.btn_bg_hover, self.custom_text, screen, WIDTH // 2, y
         )
         self.navigation_buttons.append(
             {
@@ -101,7 +107,7 @@ class Difficulty:
             }
         )
         go_back_button = self.place_button(
-            self.btn_bg, self.back_text, screen, WIDTH // 2, y + 120
+            self.btn_bg, self.btn_bg_hover, self.back_text, screen, WIDTH // 2, y + 120
         )
         self.navigation_buttons.append(
             {
