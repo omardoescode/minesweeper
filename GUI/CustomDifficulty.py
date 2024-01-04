@@ -44,7 +44,7 @@ class CustomDifficulty:
                         if input["label"] != "mines":
                             value = input["val"]
                             if value == "" or int(value) > 30 or int(value) < 3:
-                                self.header = "Rows, and columsn values have to be between 3 and 30"
+                                self.header = "Rows and columns values have to be between 3 and 30"
                                 break
                             values[input["label"]] = int(value)
                         # Handle mins
@@ -67,6 +67,7 @@ class CustomDifficulty:
                     # make the rest unactive
                     else:
                         input["is_active"] = False
+
             elif event.type == pygame.KEYDOWN:
                 for input in self.inputs:
                     if input["is_active"]:
@@ -99,8 +100,12 @@ class CustomDifficulty:
                                             else int(input["val"])
                                         )
 
-                                if new_value > rows * columns // 2:
-                                    new_value = rows * columns // 2
+                                max_value = rows * columns // 2
+                                if new_value > max_value:
+                                    self.header = (
+                                        f"You cannot have more than {max_value}"
+                                    )
+                                    new_value = max_value
 
                             input["val"] = str(new_value)
 
@@ -116,7 +121,7 @@ class CustomDifficulty:
             if str(val) != "":
                 value = str(val)
             elif is_active:
-                value = val
+                value = val  # ""
             else:
                 value = label.capitalize()
 
@@ -143,9 +148,11 @@ class CustomDifficulty:
         pygame.display.set_caption(self.title_text)
         screen.blit(self.bacground, (0, 0))
 
+        # Draw the header
         text_surface = fonts["md"].render(self.header, True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 3))
         screen.blit(text_surface, text_rect.topleft)
 
+        # Draw the inputs and the submit button
         self.draw_inputs_boxes(screen, fonts, input)
         self.draw_submit_button(screen, fonts)

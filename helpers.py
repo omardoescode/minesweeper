@@ -32,7 +32,7 @@ def every(func, lst):
 
 
 # (listof (listof (listof ... T))) -> (listof T)
-# Make all the nested lists within a list a non-listed list
+# Make all the nested lists within a list a non-nested list
 def flat(lst):
     if not lst:  # lst is empty
         return []

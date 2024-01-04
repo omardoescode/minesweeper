@@ -1,4 +1,4 @@
-from helpers import validate_coordinates, every, flat, print_colored, validate_input
+from helpers import validate_coordinates, every, flat, print_colored
 from constants import COORDINATES_TRANSITIONS, VALUE_COLORS
 import random
 
@@ -26,8 +26,8 @@ class Game:
         self.mines = mines
         self.board = []
         self.playing = True
-        self.start_playing = False
-    
+        self.start_playing = False  # True when he starts clicking
+
         for row in range(rows):
             self.board.append([])  # a new row
             for column in range(columns):

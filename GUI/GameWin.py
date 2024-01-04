@@ -24,7 +24,7 @@ class GameWin:
             pygame.image.load("./assets/buttons/menu_butt1.png"),
             self.button_coordinates,
         )
-        self.btn_bg = pygame.transform.scale(
+        self.btn_bg_hover = pygame.transform.scale(
             pygame.image.load("./assets/buttons/menu_butt1.png"),
             self.button_coordinates,
         )
