@@ -1,6 +1,6 @@
 import pygame
 from GUI.gui_helpers import create_button
-from GUI.gui_constants import WIDTH, HEIGHT, PRIMARY_COLOR, SECONDARY_COLOR
+from GUI.gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
 
 
 class CustomDifficulty:
@@ -10,7 +10,9 @@ class CustomDifficulty:
         self.inputs = []
         self.submit_button = pygame.Rect(0, 0, 0, 0)
         self.header = "Enter the rows, columns, and mines"
-        self.bacground = pygame.transform.scale(pygame.image.load('./assets/background.png'), (WIDTH, HEIGHT))
+        self.bacground = pygame.transform.scale(
+            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
+        )
 
         # Gathering info about buttons
         info = ["rows", "columns", "mines"]
@@ -74,7 +76,6 @@ class CustomDifficulty:
                         # Handle numbers
                         elif event.unicode.isnumeric():
                             # Handle Min and Max Values
-                            # The minimum values must be 3, 3 for rows, columns, max are 30, 30
                             # and mines have to be 3 < mines <= rows * columns // 2
                             new_value = int(input["val"] + event.unicode)
                             label = input["label"]
