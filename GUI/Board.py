@@ -137,6 +137,15 @@ class GUICell:
                     self.value_image[0],
                     self.value_image[0].get_rect(center=self.rectangle.center),
                 )
+        # Handling flag picking and idle animations
+        elif self.pick_flag:
+            screen.blit(self.covered_image, self.rectangle.topleft)
+            if pygame.time.get_ticks() - self.flag_pick_animation_frames < 300:
+                screen.blit(
+                        self.flag_remove_framse[int(3*(pygame.time.get_ticks() - self.flag_pick_animation_frames)/300)], self.flag_remove_framse[int(3*(pygame.time.get_ticks() - self.flag_pick_animation_frames)/300)].get_rect(center=self.rectangle.center)
+                    )
+            else:
+                self.pick_flag = False 
         # Handling flag placing and idle animations
         elif self.is_flagged:
             screen.blit(self.covered_image, self.rectangle.topleft)
@@ -148,17 +157,6 @@ class GUICell:
                 screen.blit(
                     self.flag_idle_frames[(int(5*(pygame.time.get_ticks() - self.flag_idle_animation_frames - 600*int((pygame.time.get_ticks() - self.flag_idle_animation_frames)/600))/600))%5], self.flag_idle_frames[(int(5*(pygame.time.get_ticks() - self.flag_idle_animation_frames - 600*int((pygame.time.get_ticks() - self.flag_idle_animation_frames)/600))/600))%5].get_rect(center=self.rectangle.center)
                 )
-
-        
-            ''' elif self.pick_flag:
-            if self.flag_pick_animation_frames < 4:
-                screen.blit(
-                        self.flag_remove_framse[int(self.flag_pick_animation_frames)], self.flag_remove_framse[int(self.flag_pick_animation_frames)].get_rect(center=self.rectangle.center)
-                    )
-                self.flag_pick_animation_frames+=1/10
-            else:
-                self.pick_flag = False 
-            '''
         else:
             screen.blit(self.covered_image, self.rectangle.topleft)
         
@@ -170,7 +168,7 @@ class GUICell:
 
         # Change the cell image appropriately if hovered
         if is_hovered:
-            if self.is_flagged == False and self.is_clicked == False:
+            if self.pick_flag == False and self.is_flagged == False and self.is_clicked == False:
                 screen.blit(self.hover_image, self.rectangle.topleft)
 
 class Board(Game):
