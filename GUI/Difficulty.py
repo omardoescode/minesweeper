@@ -115,6 +115,6 @@ class Difficulty:
                 "val": "MAIN_MENU",
                 "kwargs": {},
                 "x": WIDTH // 2,
-                "y": y,
+                "y": y+120,
             }
         )
