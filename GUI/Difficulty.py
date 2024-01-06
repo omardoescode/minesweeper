@@ -1,9 +1,10 @@
 import pygame
+from .Page import Page
 from GUI.gui_constants import WIDTH, HEIGHT
 from constants import DIFFICULTIES, BOARD_SIZE, NUMBER_OF_MINES
 
 
-class Difficulty:
+class Difficulty(Page):
     def __init__(self):
         self.title_text = "Minesweeper: Choose the difficulty"
         self.navigation_buttons = []
@@ -52,24 +53,6 @@ class Difficulty:
                         return btn["val"], btn["kwargs"]
         return None, None
 
-    def place_button(self, bg, bg_hover, text, screen, x, y):
-        bg_rect = bg.get_rect(center=(x, y))
-        text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
-        is_hovered = self.check_button_hover(pygame.mouse.get_pos(), {"x": x, "y": y})
-        img = bg_hover if is_hovered else bg
-        screen.blit(img, bg_rect.topleft)
-        screen.blit(text, text_rect.topleft)
-
-    def check_button_hover(self, click_coords, btn_data):
-        x, y = click_coords
-        btn_x = btn_data["x"]
-        btn_y = btn_data["y"]
-        width, height = self.button_coordinates
-        return (
-            btn_x - width / 2 <= x <= btn_x + width / 2
-            and btn_y - height / 4 <= y <= btn_y + height / 4
-        )
-
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
         screen.blit(self.bacground, (0, 0))
@@ -115,6 +98,6 @@ class Difficulty:
                 "val": "MAIN_MENU",
                 "kwargs": {},
                 "x": WIDTH // 2,
-                "y": y+120,
+                "y": y + 120,
             }
         )

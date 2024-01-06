@@ -1,8 +1,9 @@
 import pygame
 from GUI.gui_constants import WIDTH, HEIGHT
+from .Page import Page
 
 
-class GameOver:
+class GameOver(Page):
     def __init__(self, username, rows, columns, mines, difficulty):
         self.title_text = "You Lost!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
@@ -48,40 +49,6 @@ class GameOver:
                     if self.check_button_hover(event.pos, btn):
                         return btn["val"], btn["kwargs"]
         return None, None
-
-    def draw_title(self, text, screen, font, x, y):
-        text_surface = font.render(text, True, (0, 0, 0))
-        text_rect = text_surface.get_rect(
-            center=(
-                x,
-                y,
-            )
-        )
-        screen.blit(text_surface, text_rect.topleft)
-
-    def check_button_hover(self, click_coords, btn_data):
-        x, y = click_coords
-        btn_x = btn_data["x"]
-        btn_y = btn_data["y"]
-        width, height = self.button_coordinates
-        return (
-            btn_x - width / 2 <= x <= btn_x + width / 2
-            and btn_y - height / 4 <= y <= btn_y + height / 4
-        )
-
-    def place_img(self, img, screen, x, y):
-        img_rect = img.get_rect(center=(x, y))
-        screen.blit(img, img_rect.topleft)
-
-    def place_button(self, bg, bg_hover, text, screen, x, y):
-        bg_rect = bg.get_rect(center=(x, y))
-        text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
-        is_hovered = self.check_button_hover(pygame.mouse.get_pos(), {"x": x, "y": y})
-        img = bg_hover if is_hovered else bg
-        screen.blit(img, bg_rect.topleft)
-        screen.blit(text, text_rect.topleft)
-
-        return bg_rect
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)

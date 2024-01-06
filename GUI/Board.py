@@ -1,10 +1,11 @@
 import pygame
 from classes import Game
-from GUI.gui_constants import TOP_MARGIN, SECONDARY_COLOR
-from GUI.gui_helpers import calculate_cell_size, create_button
-from GUI.flag_counter import FlagCounter
+from .Page import Page
+from .gui_constants import TOP_MARGIN, SECONDARY_COLOR
+from .gui_helpers import calculate_cell_size
+from .flag_counter import FlagCounter
 from timer import Timer
-from GUI.scorer import Scorer
+from .scorer import Scorer
 from storage import save_game
 from .save_game import store_game, delete_game
 
@@ -282,7 +283,7 @@ class GUICell:
                 screen.blit(self.hover_image, self.rectangle.topleft)
 
 
-class Board(Game):
+class Board(Game, Page):
     def __init__(
         self,
         rows,
@@ -499,8 +500,8 @@ class Board(Game):
 
                 cell.draw_cell(screen)
 
-    # Draw an item in the siderbar
-    def draw_siderbar_item(self, screen, font, text, x, y, icon=None):
+    # Draw an item in the topbar
+    def draw_topbar_item(self, screen, font, text, x, y, icon=None):
         # Assuming screen is the Pygame surface
         screen_width = screen.get_width()
 
@@ -524,34 +525,19 @@ class Board(Game):
     def draw_topbar(self, screen, fonts):
         # Timer
         time = f"{self.timer.get_elapsed_time():.0f}s"
-        self.draw_siderbar_item(screen, fonts["sm"], time, 150, 40, self.TB_timer_image)
+        self.draw_topbar_item(screen, fonts["sm"], time, 150, 40, self.TB_timer_image)
 
         # Score
         score = f"Score: {self.scorer.calculate_score(self.get_revealed_cells(), self.timer.get_elapsed_time())} XP"
-        self.draw_siderbar_item(screen, fonts["xs"], score, 300 + 10, 40)
+        self.draw_topbar_item(screen, fonts["xs"], score, 300 + 10, 40)
 
         # Flag Counter
         flags = f"{self.flag_counter.get_remaining_flags()}"
-        self.draw_siderbar_item(
+        self.draw_topbar_item(
             screen, fonts["sm"], flags, 450 + 20, 40, self.TB_flag_image
         )
 
-        self.menu = self.draw_button("Pause", (10, 30), screen, fonts)
-
-    def draw_button(self, text, position, screen, fonts, handle_click=lambda: None):
-        return create_button(
-            position[0],
-            position[1],
-            120,
-            50,
-            text,
-            (255, 255, 255),
-            SECONDARY_COLOR,
-            (0, 0, 0),
-            screen,
-            fonts,
-            handle_click,
-        )
+        self.menu = self.draw_small_button("Pause", (10, 30), screen, fonts)
 
     def handle_events(self):
         REVEAL_MINES_OR_FLAGS_EVENT = pygame.USEREVENT + 1

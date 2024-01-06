@@ -1,9 +1,10 @@
 import pygame
-from GUI.gui_helpers import create_button
-from GUI.gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
+from .Page import Page
+from .gui_helpers import create_button
+from .gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
 
 
-class CustomDifficulty:
+class CustomDifficulty(Page):
     def __init__(self):
         self.title_text = "Enter Difficulty"
         self.submit_button = pygame.Rect(0, 0, 0, 0)
