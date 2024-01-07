@@ -5,6 +5,7 @@ from GUI.gui_constants import WIDTH, HEIGHT
 
 class GameWin(Page):
     def __init__(self, username, rows, columns, mines, difficulty, recorder):
+        super().__init__()
         self.title_text = "You WON!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
@@ -16,19 +17,9 @@ class GameWin(Page):
 
         # Load the images
         self.button_coordinates = (300, 200)
-        self.background = pygame.transform.scale(
-            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
-        )
+
         self.title_image = pygame.transform.scale(
             pygame.image.load("./assets/text/you-won.png"), (350, 100)
-        )
-        self.btn_bg = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1.png"),
-            self.button_coordinates,
-        )
-        self.btn_bg_hover = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
-            self.button_coordinates,
         )
 
         self.restart_text = pygame.transform.scale(
@@ -85,24 +76,36 @@ class GameWin(Page):
             HEIGHT / 5 + 70,
         )
 
-        # Only add the buttons in case there are not in navigation buttons
-        if not self.navigation_buttons:
-            self.add_button(
-                screen,
-                self.restart_text,
-                WIDTH // 2,
-                HEIGHT // 5 + 180,
-                "BOARD",
-                kwargs={
-                    "rows": self.rows,
-                    "columns": self.columns,
-                    "mines": self.mines,
-                    "difficulty": self.difficulty,
-                },
-            )
-            self.add_button(
-                screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 300, "MAIN_MENU"
-            )
-            self.add_button(
-                screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 420, "QUIT_GAME"
-            )
+        self.add_button(
+            screen,
+            self.restart_text,
+            WIDTH // 2,
+            HEIGHT // 5 + 60,
+            "REWATCH",
+            kwargs={
+                "rows": self.rows,
+                "columns": self.columns,
+                "mines": self.mines,
+                "difficulty": self.difficulty,
+                "recorder": self.recorder,
+            },
+        )
+        self.add_button(
+            screen,
+            self.restart_text,
+            WIDTH // 2,
+            HEIGHT // 5 + 180,
+            "BOARD",
+            kwargs={
+                "rows": self.rows,
+                "columns": self.columns,
+                "mines": self.mines,
+                "difficulty": self.difficulty,
+            },
+        )
+        self.add_button(
+            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 300, "MAIN_MENU"
+        )
+        self.add_button(
+            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 420, "QUIT_GAME"
+        )

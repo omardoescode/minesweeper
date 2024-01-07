@@ -313,7 +313,6 @@ class Board(Game, Page):
         self.height = rows * self.cell_size + TOP_MARGIN
         self.cells = []
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.username = username
         self.difficulty = difficulty
 
         # Remove past records
@@ -744,5 +743,6 @@ class Board(Game, Page):
     def update(self, screen, fonts):
         screen.blit(self.background, (0, 0))
         pygame.display.set_caption("Enjoy!!!")
+
         self.draw_topbar(screen, fonts)
         self.update_cells(screen)

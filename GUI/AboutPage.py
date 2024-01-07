@@ -8,9 +8,7 @@ from constants import CREDITS
 class AboutPage(Page):
     def __init__(self):
         self.title_text = "Minesweeper Main Menu"
-        self.background = pygame.transform.scale(
-            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
-        )
+
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
 
     def handle_events(self):

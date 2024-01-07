@@ -2,18 +2,17 @@ import pygame
 from .Page import Page
 from .gui_helpers import create_button
 from .gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
+from constants import MIN_MAX_VALUES
 
 
 class CustomDifficulty(Page):
     def __init__(self):
+        super().__init__()
         self.title_text = "Enter Difficulty"
         self.submit_button = pygame.Rect(0, 0, 0, 0)
         self.inputs = []
         self.submit_button = pygame.Rect(0, 0, 0, 0)
         self.header = "Enter the rows, columns, and mines"
-        self.bacground = pygame.transform.scale(
-            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
-        )
 
         # Gathering info about buttons
         info = ["rows", "columns", "mines"]
@@ -39,13 +38,23 @@ class CustomDifficulty(Page):
                 # Handle Submit Click
                 if self.submit_button.collidepoint(event.pos):
                     values = {"rows": 0, "columns": 0, "mines": 0}
+
                     # Validate values
                     for input in self.inputs:
                         # Hanlde rows, and columns
                         if input["label"] != "mines":
+                            # Get Min and Max values for the rows and the columns
+                            min_value = MIN_MAX_VALUES["min"]
+                            max_value = MIN_MAX_VALUES["max"]
+
+                            # Check validation
                             value = input["val"]
-                            if value == "" or int(value) > 30 or int(value) < 3:
-                                self.header = "Rows and columns values have to be between 3 and 30"
+                            if (
+                                value == ""
+                                or int(value) > max_value
+                                or int(value) < min_value
+                            ):
+                                self.header = f"Rows and columns values have to be between {min_value} and {max_value}"
                                 break
                             values[input["label"]] = int(value)
                         # Handle mins
@@ -80,10 +89,11 @@ class CustomDifficulty(Page):
                             # Handle Min and Max Values
                             # and mines have to be 3 < mines <= rows * columns // 2
                             new_value = int(input["val"] + event.unicode)
+                            max_value = MIN_MAX_VALUES["max"]
                             label = input["label"]
                             if label != "mines":  # Handle rows, and columns
-                                if new_value > 30:
-                                    new_value = 30
+                                if new_value > max_value:
+                                    new_value = max_value
                             else:  # Handle mines
                                 # Retireve the current rows, and columsn values
                                 rows, columns = 0, 0
@@ -147,7 +157,7 @@ class CustomDifficulty(Page):
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.blit(self.bacground, (0, 0))
+        screen.blit(self.background, (0, 0))
 
         # Draw the header
         text_surface = fonts["md"].render(self.header, True, (0, 0, 0))

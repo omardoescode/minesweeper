@@ -1,9 +1,23 @@
 import pygame
 from .gui_helpers import create_button
-from .gui_constants import SECONDARY_COLOR
+from .gui_constants import WIDTH, HEIGHT, SECONDARY_COLOR
 
 
 class Page:
+    def __init__(self):
+        self.background = pygame.transform.scale(
+            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
+        )
+        self.button_coordinates = (300, 200)
+        self.btn_bg = pygame.transform.scale(
+            pygame.image.load("./assets/buttons/menu_butt1.png"),
+            self.button_coordinates,
+        )
+        self.btn_bg_hover = pygame.transform.scale(
+            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
+            self.button_coordinates,
+        )
+
     def check_button_hover(self, click_coords, btn_data):
         x, y = click_coords
         btn_x = btn_data["x"]

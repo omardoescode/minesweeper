@@ -12,6 +12,8 @@ from .PauseMenu import PauseMenu
 from .AboutPage import AboutPage
 from .MusicPlayer import MusicPlayer
 from .Stats import Stats
+from .RewatchGame import RewatchGame
+
 
 class GUI:
     def __init__(self):
@@ -34,7 +36,7 @@ class GUI:
     # This function handles the game with all the navigation, and playing background music
     def start_game(self):
         current_page = PlayerNamePage()
-        self.music_player.play_default_music() # Start the music right away
+        self.music_player.play_default_music()  # Start the music right away
         while self.running:
             action, kwargs = current_page.handle_events()
 
@@ -51,18 +53,18 @@ class GUI:
                     if kwargs and "name" in kwargs:
                         self.username = kwargs["name"]
                     current_page = MainMenu(self.username, self.music_player)
-                    
+
                     # This code will run when navigating from board to main menu
                     # As the music changes, so cannot continue the music from player page name
                     if not self.music_player.check_default_music():
-                        self.music_player.play_default_music() 
+                        self.music_player.play_default_music()
                 case "PAUSE_MENU":
                     current_page = PauseMenu(**kwargs)
 
                 case "DIFFICULTY":
                     current_page = Difficulty()
 
-                case 'STATS':
+                case "STATS":
                     current_page = Stats(self.username)
 
                 case "CUSTOM_DIFFICULTY":
@@ -71,7 +73,7 @@ class GUI:
                 case "BOARD":
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
                     board = None
-                    
+
                     # Check if coming from pause menu, where board value exists
                     if kwargs and "board" in kwargs:
                         board = kwargs["board"]
@@ -82,31 +84,38 @@ class GUI:
                         kwargs["mines"],
                         self.music_player,
                         self.username,
-                        kwargs.get('difficulty', 'custom'),
+                        kwargs.get("difficulty", "custom"),
                         board=board,
-                        initial_time=kwargs.get('initial_time', 0)
+                        initial_time=kwargs.get("initial_time", 0),
                     )
 
                     # Play the board music
                     self.music_player.play_board_music()
 
+                case "REWATCH":
+                    current_page = RewatchGame(
+                        rows=kwargs["rows"],
+                        columns=kwargs["columns"],
+                        mines=kwargs["mines"],
+                        music_player=self.music_player,
+                        username=self.username,
+                        difficulty=kwargs.get("difficulty", "custom"),
+                        recorder=kwargs["recorder"],
+                    )
+
+                    # Play the board music
+                    self.music_player.play_board_music()
                 case "GAME_LOSE":
                     # Reset the coordiantes
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-                    current_page = GameOver(
-                        self.username,
-                        **kwargs
-                    )
+                    current_page = GameOver(self.username, **kwargs)
                     self.music_player.play_losing_music()
                 case "GAME_WIN":
                     # Reset the coordiantes
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-                    current_page = GameWin(
-                        self.username,
-                        **kwargs
-                    )
+                    current_page = GameWin(self.username, **kwargs)
                     self.music_player.play_winning_music()
                 case "ABOUT":
                     current_page = AboutPage()

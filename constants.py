@@ -8,7 +8,7 @@ CREDITS = {
     "Omar Mohammed": "23-101288",
     "Mohammed Waleed": "23-101283",
     "Ahmed Youssef": "23-101115",
-    "Omar Hisham": "23-101302"
+    "Omar Hisham": "23-101302",
 }
 
 NUMBER_OF_MINES = {"easy": 10, "medium": 40, "hard": 99}
@@ -18,6 +18,9 @@ BOARD_SIZE = {
     "medium": (16, 16),
     "hard": (16, 30),
 }
+
+MIN_MAX_VALUES = {"min": 5, "max": 20}
+
 
 VALUE_COLORS = {
     1: "light_blue",

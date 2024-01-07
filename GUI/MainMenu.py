@@ -6,28 +6,16 @@ from .save_game import check_game, retrieve_game
 
 class MainMenu(Page):
     def __init__(self, username, music_player):
+        super().__init__()
         self.title_text = "Minesweeper Main Menu"
         self.username = username
         self.music_player = music_player
 
-        self.background = pygame.transform.scale(
-            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
-        )
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
 
         # Loading Images
-        self.button_coordinates = (300, 200)
         self.title_image = pygame.transform.scale(
             pygame.image.load("./assets/title.png"), (550, 100)
-        )
-
-        self.btn_bg = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1.png"),
-            self.button_coordinates,
-        )
-        self.btn_bg_hover = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
-            self.button_coordinates,
         )
 
         self.play_text = pygame.transform.scale(

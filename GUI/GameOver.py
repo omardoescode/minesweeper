@@ -5,6 +5,7 @@ from .Page import Page
 
 class GameOver(Page):
     def __init__(self, username, rows, columns, mines, difficulty, recorder):
+        super().__init__()
         self.title_text = "You Lost!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
@@ -16,19 +17,9 @@ class GameOver(Page):
 
         # Load the images
         self.button_coordinates = (300, 200)
-        self.background = pygame.transform.scale(
-            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
-        )
+
         self.title_image = pygame.transform.scale(
             pygame.image.load("./assets/text/game-over.png"), (400, 100)
-        )
-        self.btn_bg = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1.png"),
-            self.button_coordinates,
-        )
-        self.btn_bg_hover = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
-            self.button_coordinates,
         )
 
         self.restart_text = pygame.transform.scale(
@@ -89,7 +80,21 @@ class GameOver(Page):
             screen,
             self.restart_text,
             WIDTH // 2,
-            HEIGHT // 5 + 180,
+            HEIGHT // 5 + 140,
+            "REWATCH",
+            kwargs={
+                "rows": self.rows,
+                "columns": self.columns,
+                "mines": self.mines,
+                "difficulty": self.difficulty,
+                "recorder": self.recorder,
+            },
+        )
+        self.add_button(
+            screen,
+            self.restart_text,
+            WIDTH // 2,
+            HEIGHT // 5 + 260,
             "BOARD",
             kwargs={
                 "rows": self.rows,
@@ -99,8 +104,8 @@ class GameOver(Page):
             },
         )
         self.add_button(
-            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 300, "MAIN_MENU"
+            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 380, "MAIN_MENU"
         )
         self.add_button(
-            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 420, "QUIT_GAME"
+            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 500, "QUIT_GAME"
         )

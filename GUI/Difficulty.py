@@ -6,6 +6,7 @@ from constants import DIFFICULTIES, BOARD_SIZE, NUMBER_OF_MINES
 
 class Difficulty(Page):
     def __init__(self):
+        super().__init__()
         self.title_text = "Minesweeper: Choose the difficulty"
         self.navigation_buttons = []
         self.vertical_placement = HEIGHT // 5
@@ -15,14 +16,7 @@ class Difficulty(Page):
 
         # Load the images
         self.button_coordinates = (300, 200)
-        self.btn_bg = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1.png"),
-            self.button_coordinates,
-        )
-        self.btn_bg_hover = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
-            self.button_coordinates,
-        )
+
         # self.btn_bg_hovered = pygame.transform.scale(pygame.image.load("./assets/buttons/menu_butt1_hover.png"), (200, 100))
 
         self.texts = {
@@ -60,7 +54,12 @@ class Difficulty(Page):
         y = 120
         for dif in DIFFICULTIES.values():
             btn = self.place_button(
-                self.btn_bg, self.btn_bg_hover, self.texts[dif], screen, WIDTH // 2, y
+                self.btn_bg,
+                self.btn_bg_hover,
+                self.texts[dif],
+                screen,
+                WIDTH // 2,
+                y,
             )
             self.navigation_buttons.append(
                 {
@@ -78,7 +77,12 @@ class Difficulty(Page):
             )
             y += 120
         custom_difficulty_button = self.place_button(
-            self.btn_bg, self.btn_bg_hover, self.custom_text, screen, WIDTH // 2, y
+            self.btn_bg,
+            self.btn_bg_hover,
+            self.custom_text,
+            screen,
+            WIDTH // 2,
+            y,
         )
         self.navigation_buttons.append(
             {
@@ -90,7 +94,12 @@ class Difficulty(Page):
             }
         )
         go_back_button = self.place_button(
-            self.btn_bg, self.btn_bg_hover, self.back_text, screen, WIDTH // 2, y + 120
+            self.btn_bg,
+            self.btn_bg_hover,
+            self.back_text,
+            screen,
+            WIDTH // 2,
+            y + 120,
         )
         self.navigation_buttons.append(
             {
