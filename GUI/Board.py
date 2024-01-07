@@ -8,6 +8,7 @@ from timer import Timer
 from .scorer import Scorer
 from storage import save_game
 from .save_game import store_game, delete_game
+from .Recorder import Recorder
 
 
 class GUICell:
@@ -328,6 +329,9 @@ class Board(Game, Page):
         # Initalize the score
         self.scorer = Scorer()
 
+        # Initalize the recoreder
+        self.recorder = Recorder()
+
         # Initlaize the board given
         if board:
             self.start_playing = True
@@ -611,6 +615,10 @@ class Board(Game, Page):
                     cell = self.cells[row * self.columns + column]
                     if event.button == 1 and not cell.is_flagged:
                         cell.reveal_cell()
+
+                        # Record flagging or unflagging the cell
+                        self.recorder.add_step(row, column, "click")
+
                         cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
 
                         if (self.start_playing and self.check_win()) or (
@@ -624,6 +632,9 @@ class Board(Game, Page):
 
                     elif event.button == 3 and not cell.is_clicked:
                         cell.flag_cell()
+
+                        # Record flagging or unflagging the cell
+                        self.recorder.add_step(row, column, "flag")
 
             if event.type == (REVEAL_MINES_OR_FLAGS_EVENT):
                 if self.start_playing and self.check_win():
@@ -691,11 +702,17 @@ class Board(Game, Page):
                         ),
                         self.timer.get_elapsed_time(),
                     )
+
+                    # Save the board in the recorder
+                    self.recorder.set_board(self.board)
+
+                    # Navigate to Game Win Page
                     return "GAME_WIN", {
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
                         "difficulty": self.difficulty,
+                        "recorder": self.recorder,
                     }
 
                 # If player won, take them to the game lost page
@@ -709,11 +726,17 @@ class Board(Game, Page):
                         ),
                         self.timer.get_elapsed_time(),
                     )
+
+                    # Save the board in the recorder
+                    self.recorder.set_board(self.board)
+
+                    # Navigate to Game Lose Page
                     return "GAME_LOSE", {
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
                         "difficulty": self.difficulty,
+                        "recorder": self.recorder,
                     }
 
         return None, None

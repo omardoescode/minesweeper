@@ -4,7 +4,7 @@ from GUI.gui_constants import WIDTH, HEIGHT
 
 
 class GameWin(Page):
-    def __init__(self, username, rows, columns, mines, difficulty):
+    def __init__(self, username, rows, columns, mines, difficulty, recorder):
         self.title_text = "You WON!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
         self.username = username
@@ -12,6 +12,7 @@ class GameWin(Page):
         self.columns = columns
         self.mines = mines
         self.difficulty = difficulty
+        self.recorder = recorder
 
         # Load the images
         self.button_coordinates = (300, 200)
@@ -26,7 +27,7 @@ class GameWin(Page):
             self.button_coordinates,
         )
         self.btn_bg_hover = pygame.transform.scale(
-            pygame.image.load("./assets/buttons/menu_butt1.png"),
+            pygame.image.load("./assets/buttons/menu_butt1_hover.png"),
             self.button_coordinates,
         )
 
@@ -44,17 +45,37 @@ class GameWin(Page):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "QUIT_GAME", None
+
+            # Handle Buttons Clicks
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for btn in self.navigation_buttons:
                     if self.check_button_hover(event.pos, btn):
                         return btn["val"], btn["kwargs"]
         return None, None
 
+    def add_button(self, screen, text_img, x, y, val, kwargs={}):
+        btn = self.place_button(
+            self.btn_bg,
+            self.btn_bg_hover,
+            text_img,
+            screen,
+            x,
+            y,
+        )
+        self.navigation_buttons.append(
+            {
+                "obj": btn,
+                "val": val,
+                "kwargs": kwargs,
+                "x": x,
+                "y": y,
+            }
+        )
+
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
         screen.blit(self.background, (0, 0))
 
-        # self.draw_title("You Won!", screen, fonts["lg"], WIDTH / 2, HEIGHT / 3)
         self.place_img(self.title_image, screen, WIDTH // 2, HEIGHT / 5)
         self.draw_title(
             f"Congratulations, {self.username}",
@@ -64,59 +85,24 @@ class GameWin(Page):
             HEIGHT / 5 + 70,
         )
 
-        game_start = self.place_button(
-            self.btn_bg,
-            self.btn_bg_hover,
-            self.restart_text,
-            screen,
-            WIDTH // 2,
-            HEIGHT // 5 + 180,
-        )
-        self.navigation_buttons.append(
-            {
-                "obj": game_start,
-                "val": "BOARD",
-                "kwargs": {
+        # Only add the buttons in case there are not in navigation buttons
+        if not self.navigation_buttons:
+            self.add_button(
+                screen,
+                self.restart_text,
+                WIDTH // 2,
+                HEIGHT // 5 + 180,
+                "BOARD",
+                kwargs={
                     "rows": self.rows,
                     "columns": self.columns,
                     "mines": self.mines,
                     "difficulty": self.difficulty,
                 },
-                "x": WIDTH // 2,
-                "y": HEIGHT // 5 + 180,
-            }
-        )
-        back_main_menu = self.place_button(
-            self.btn_bg,
-            self.btn_bg_hover,
-            self.back_text,
-            screen,
-            WIDTH // 2,
-            HEIGHT // 5 + 300,
-        )
-        self.navigation_buttons.append(
-            {
-                "obj": back_main_menu,
-                "val": "MAIN_MENU",
-                "kwargs": {},
-                "x": WIDTH // 2,
-                "y": HEIGHT // 5 + 300,
-            }
-        )
-        quit_button = self.place_button(
-            self.btn_bg,
-            self.btn_bg_hover,
-            self.quit_text,
-            screen,
-            WIDTH // 2,
-            HEIGHT // 5 + 420,
-        )
-        self.navigation_buttons.append(
-            {
-                "obj": quit_button,
-                "val": "QUIT_GAME",
-                "kwargs": {},
-                "x": WIDTH // 2,
-                "y": HEIGHT // 5 + 420,
-            }
-        )
+            )
+            self.add_button(
+                screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 300, "MAIN_MENU"
+            )
+            self.add_button(
+                screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 420, "QUIT_GAME"
+            )
