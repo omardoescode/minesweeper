@@ -25,6 +25,9 @@ class GameOver(Page):
         self.restart_text = pygame.transform.scale(
             pygame.image.load("./assets/text/play-again.png"), (200, 50)
         )
+        self.rewatch_game = pygame.transform.scale(
+            pygame.image.load("./assets/text/rewatch-game.png"), (200, 50)
+        )
         self.back_text = pygame.transform.scale(
             pygame.image.load("./assets/text/back.png"), (100, 50)
         )

@@ -542,7 +542,7 @@ class Board(Game, Page):
 
         self.menu = self.draw_small_button("Pause", (10, 30), screen, fonts)
 
-    def handle_events(self):
+    def handle_events(self, playing_record=False):
         REVEAL_MINES_OR_FLAGS_EVENT = pygame.USEREVENT + 1
         WIN_OR_LOSE_EVENT = pygame.USEREVENT + 2
 
@@ -551,8 +551,8 @@ class Board(Game, Page):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # Save the game in case it was clicked while the game is over, or before it even started
-                if self.playing:
+                # Save the game in case it was clicked while the game is over, or before it even started and also a record isn't playing
+                if self.playing and not playing_record:
                     store_game(
                         self.username,
                         self.rows,
@@ -598,10 +598,16 @@ class Board(Game, Page):
                         "state": state,
                         "difficulty": self.difficulty,
                         "initial_time": self.timer.get_elapsed_time(),
+                        "recorder": self.recorder,
+                        "is_recording": playing_record,
                     }
 
             # Handle clicking on cells
-            if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
+            if (
+                event.type == pygame.MOUSEBUTTONDOWN
+                and not self.stop_input
+                and not playing_record
+            ):
                 coords = pygame.mouse.get_pos()
 
                 # This if statement aims to prevent a bug
@@ -691,7 +697,9 @@ class Board(Game, Page):
                 pygame.time.set_timer(WIN_OR_LOSE_EVENT, 0)
 
                 # If player won, take them to the game win page
-                if self.start_playing and self.check_win():
+                if (
+                    self.start_playing and self.check_win() and not playing_record
+                ):  # navigating to this page while recording will be handled in the RewatchGame Page
                     save_game(
                         self.username,
                         self.difficulty,
@@ -714,8 +722,8 @@ class Board(Game, Page):
                         "recorder": self.recorder,
                     }
 
-                # If player won, take them to the game lost page
-                if not self.playing:
+                # If player lost, take them to the GameLost page
+                if not self.playing and not playing_record:
                     save_game(
                         self.username,
                         self.difficulty,

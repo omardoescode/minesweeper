@@ -2,7 +2,21 @@ import pygame
 
 
 class PauseMenu:
-    def __init__(self, rows, columns, mines, board, difficulty, state, initial_time):
+    def __init__(
+        self,
+        rows,
+        columns,
+        mines,
+        board,
+        difficulty,
+        state,
+        initial_time,
+        is_recording=False,
+        recorder=None,
+    ):
+        page_back = "BOARD"
+        if is_recording:
+            page_back = "REWATCH"
         # Handle what buttons to show on menu, depending on the state of the current game
         if state == "over":
             self.buttons = []
@@ -10,13 +24,14 @@ class PauseMenu:
             self.buttons = [
                 {
                     "text": "Continue",
-                    "action": "BOARD",
+                    "action": page_back,
                     "kwargs": {
                         "difficulty": difficulty,
                         "rows": rows,
                         "columns": columns,
                         "mines": mines,
                         "initial_time": initial_time,
+                        "recorder": recorder,
                     },
                 }
             ]
@@ -24,7 +39,7 @@ class PauseMenu:
             self.buttons = [
                 {
                     "text": "Continue",
-                    "action": "BOARD",
+                    "action": page_back,
                     "kwargs": {
                         "difficulty": difficulty,
                         "rows": rows,
@@ -32,6 +47,7 @@ class PauseMenu:
                         "mines": mines,
                         "board": board,
                         "initial_time": initial_time,
+                        "recorder": recorder,
                     },
                 }
             ]
@@ -40,7 +56,7 @@ class PauseMenu:
         self.buttons += [
             {
                 "text": "Restart",
-                "action": "BOARD",
+                "action": "BOARD",  # Restart button will play a new game, whether you are in RewatchGame or in Board Page
                 "kwargs": {
                     "difficulty": difficulty,
                     "rows": rows,

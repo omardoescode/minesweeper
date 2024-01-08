@@ -5,10 +5,16 @@ class Recorder:
         self.board = []
 
     def add_step(self, row, column, action):
+        # Check Action value
+        if action not in ["click", "flag"]:
+            raise Exception("A step can either be a click or a flag")
+
+        # Adding a new step
         new_step = Step(row, column, action)
         self.steps.append(new_step)
         self.undone_steps.append(new_step)
 
+    # () -> (listof Step)
     def get_steps(self):
         return self.steps
 
@@ -34,6 +40,22 @@ class Recorder:
     def finishied_replaying(self):
         return not self.undone_steps
 
+    # () -> Recorder
+    # Return a new recorder in which it has the same steps and the same board but has all cells covered and unflagged
+    def restart(self):
+        # Restart the undone steps
+        steps = self.steps
+        undone_steps = self.steps
+
+        # Initiate the new recorder and set the board
+        new_recorder = Recorder()
+        new_recorder.set_board(self.board)
+        new_recorder.steps = steps
+        new_recorder.undone_steps = undone_steps
+
+        # Return the new recorder
+        return new_recorder
+
 
 class Step:
     # Invariant: action will always either be "click" "flag"
@@ -43,7 +65,6 @@ class Step:
         self.row = row
         self.column = column
         self.action = action
-        self.shown = False  # True when revealed to the user in the RewatchGame Page
 
     def __str__(self):
         return f"{self.action} in {self.row}x{self.column}"

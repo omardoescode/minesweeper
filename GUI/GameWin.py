@@ -22,6 +22,9 @@ class GameWin(Page):
             pygame.image.load("./assets/text/you-won.png"), (350, 100)
         )
 
+        self.rewatch_game = pygame.transform.scale(
+            pygame.image.load("./assets/text/rewatch-game.png"), (200, 50)
+        )
         self.restart_text = pygame.transform.scale(
             pygame.image.load("./assets/text/play-again.png"), (200, 50)
         )
@@ -80,7 +83,7 @@ class GameWin(Page):
             screen,
             self.restart_text,
             WIDTH // 2,
-            HEIGHT // 5 + 60,
+            HEIGHT // 5 + 140,
             "REWATCH",
             kwargs={
                 "rows": self.rows,
@@ -94,7 +97,7 @@ class GameWin(Page):
             screen,
             self.restart_text,
             WIDTH // 2,
-            HEIGHT // 5 + 180,
+            HEIGHT // 5 + 260,
             "BOARD",
             kwargs={
                 "rows": self.rows,
@@ -104,8 +107,8 @@ class GameWin(Page):
             },
         )
         self.add_button(
-            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 300, "MAIN_MENU"
+            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 380, "MAIN_MENU"
         )
         self.add_button(
-            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 420, "QUIT_GAME"
+            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 500, "QUIT_GAME"
         )
