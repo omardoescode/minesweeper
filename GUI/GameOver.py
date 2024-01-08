@@ -90,7 +90,7 @@ class GameOver(Page):
                 "columns": self.columns,
                 "mines": self.mines,
                 "difficulty": self.difficulty,
-                "recorder": self.recorder,
+                "recorder": self.recorder.restart(),
             },
         )
         self.add_button(

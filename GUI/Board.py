@@ -551,7 +551,7 @@ class Board(Game, Page):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # Save the game in case it was clicked while the game is over, or before it even started and also a record isn't playing
+                # Save the game in case it was clicked while the game is not over, or before it even started and also a record isn't playing
                 if self.playing and not playing_record:
                     store_game(
                         self.username,
@@ -719,7 +719,7 @@ class Board(Game, Page):
                         "columns": self.columns,
                         "mines": self.mines,
                         "difficulty": self.difficulty,
-                        "recorder": self.recorder,
+                        "recorder": self.recorder.restart(),
                     }
 
                 # If player lost, take them to the GameLost page
@@ -743,7 +743,7 @@ class Board(Game, Page):
                         "columns": self.columns,
                         "mines": self.mines,
                         "difficulty": self.difficulty,
-                        "recorder": self.recorder,
+                        "recorder": self.recorder.restart(),
                     }
 
         return None, None

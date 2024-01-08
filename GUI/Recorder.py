@@ -43,18 +43,22 @@ class Recorder:
     # () -> Recorder
     # Return a new recorder in which it has the same steps and the same board but has all cells covered and unflagged
     def restart(self):
-        # Restart the undone steps
         steps = self.steps
-        undone_steps = self.steps
 
         # Initiate the new recorder and set the board
         new_recorder = Recorder()
-        new_recorder.set_board(self.board)
-        new_recorder.steps = steps
-        new_recorder.undone_steps = undone_steps
-
+        new_recorder.set_board(self.board.copy())  # Unflag and cover all cells
+        new_recorder.steps = steps.copy()
+        new_recorder.undone_steps = steps.copy()  # Restart the steps
+        # ! If we don't assign it as a copy, we won't be allowed for more than one replay, since they will have the same address, and get_next_step will erase all steps in the first replay
+        # ? Mutation?
         # Return the new recorder
         return new_recorder
+
+    # () -> ()
+    # a helper function for debugging the recorder functionality
+    def print_steps(self):
+        print(", ".join(self.steps))
 
 
 class Step:

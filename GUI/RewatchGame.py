@@ -19,7 +19,7 @@ class RewatchGame(Board):
         self.start_time = pygame.time.get_ticks()
 
     # We will modify this handle_events function to allow only for quitting the game and cliking the pause game
-    # TODO: Pass the recorder to pause menu to continue later
+    # Handling navigation to GameWin and GameLose isn't done while the game is playing the record in the parental method
     def handle_events(self):
         super().handle_events(playing_record=True)
 
@@ -31,7 +31,7 @@ class RewatchGame(Board):
                     "columns": self.columns,
                     "mines": self.mines,
                     "difficulty": self.difficulty,
-                    "recorder": self.recorder.restart(),
+                    "recorder": self.recorder,
                 }
             else:  # We pass a finished game, so if check_win returns false, he lost, not pause
                 return "GAME_LOSE", {
@@ -39,7 +39,7 @@ class RewatchGame(Board):
                     "columns": self.columns,
                     "mines": self.mines,
                     "difficulty": self.difficulty,
-                    "recorder": self.recorder.restart(),
+                    "recorder": self.recorder,
                 }
 
         return None, None
