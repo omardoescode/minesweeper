@@ -81,7 +81,7 @@ class GameOver(Page):
 
         self.add_button(
             screen,
-            self.restart_text,
+            self.rewatch_game,
             WIDTH // 2,
             HEIGHT // 5 + 140,
             "REWATCH",

@@ -7,6 +7,7 @@ from constants import CREDITS
 
 class AboutPage(Page):
     def __init__(self):
+        super().__init__()
         self.title_text = "Minesweeper Main Menu"
 
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}

@@ -8,7 +8,7 @@ class Page:
         self.background = pygame.transform.scale(
             pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
         )
-        self.button_coordinates = (300, 200)
+        self.button_coordinates = (300, 100)
         self.btn_bg = pygame.transform.scale(
             pygame.image.load("./assets/buttons/menu_butt1.png"),
             self.button_coordinates,
@@ -25,7 +25,7 @@ class Page:
         width, height = self.button_coordinates
         return (
             btn_x - width / 2 <= x <= btn_x + width / 2
-            and btn_y - height / 4 <= y <= btn_y + height / 4
+            and btn_y - height / 2 <= y <= btn_y + height / 2
         )
 
     def draw_title(self, text, screen, font, x, y):
@@ -46,7 +46,7 @@ class Page:
 
     def place_button(self, bg, bg_hover, text, screen, x, y):
         bg_rect = bg.get_rect(center=(x, y))
-        text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 85))
+        text_rect = text.get_rect(center=(bg_rect.midtop[0], bg_rect.midtop[1] + 30))
         is_hovered = self.check_button_hover(pygame.mouse.get_pos(), {"x": x, "y": y})
         img = bg_hover if is_hovered else bg
         screen.blit(img, bg_rect.topleft)
