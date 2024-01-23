@@ -14,11 +14,6 @@ class Difficulty(Page):
             pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
         )
 
-        # Load the images
-        self.button_coordinates = (300, 200)
-
-        # self.btn_bg_hovered = pygame.transform.scale(pygame.image.load("./assets/buttons/menu_butt1_hover.png"), (200, 100))
-
         self.texts = {
             "easy": pygame.transform.scale(
                 pygame.image.load("./assets/text/easy.png"), (100, 50)

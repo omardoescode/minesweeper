@@ -1,17 +1,14 @@
 import pygame
-from .gui_constants import SECONDARY_COLOR, WIDTH, HEIGHT
-from .gui_helpers import create_button
+from .gui_constants import WIDTH, HEIGHT
 from storage import load_games
 from .Page import Page
 
 
 class Stats(Page):
     def __init__(self, username):
+        super().__init__()
         self.title_text = "Stats"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
-        self.bacground = pygame.transform.scale(
-            pygame.image.load("./assets/background.png"), (WIDTH, HEIGHT)
-        )
         self.username = username
         self.games = load_games()
         self.my_games = list(
@@ -66,7 +63,7 @@ class Stats(Page):
 
     def update(self, screen, fonts):
         pygame.display.set_caption(self.title_text)
-        screen.blit(self.bacground, (0, 0))
+        screen.blit(self.background, (0, 0))
 
         self.draw_title("My Stats", screen, fonts["md"], WIDTH * 0.15, HEIGHT / 3)
         self.draw_title(

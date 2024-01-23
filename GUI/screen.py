@@ -12,7 +12,6 @@ from .PauseMenu import PauseMenu
 from .AboutPage import AboutPage
 from .MusicPlayer import MusicPlayer
 from .Stats import Stats
-from .RewatchGame import RewatchGame
 
 
 class GUI:
@@ -92,19 +91,6 @@ class GUI:
                     # Play the board music
                     self.music_player.play_board_music()
 
-                case "REWATCH":
-                    current_page = RewatchGame(
-                        rows=kwargs["rows"],
-                        columns=kwargs["columns"],
-                        mines=kwargs["mines"],
-                        music_player=self.music_player,
-                        username=self.username,
-                        difficulty=kwargs.get("difficulty", "custom"),
-                        recorder=kwargs["recorder"],
-                    )
-
-                    # Play the board music
-                    self.music_player.play_board_music()
                 case "GAME_LOSE":
                     # Reset the coordiantes
                     self.screen = pygame.display.set_mode((WIDTH, HEIGHT))

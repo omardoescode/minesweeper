@@ -11,13 +11,8 @@ class PauseMenu:
         difficulty,
         state,
         initial_time,
-        is_recording=False,
-        recorder=None,
     ):
         page_back = "BOARD"
-        if is_recording:
-            page_back = "REWATCH"
-        # Handle what buttons to show on menu, depending on the state of the current game
         if state == "over":
             self.buttons = []
         elif state == "didn't_start":
@@ -31,7 +26,6 @@ class PauseMenu:
                         "columns": columns,
                         "mines": mines,
                         "initial_time": initial_time,
-                        "recorder": recorder,
                     },
                 }
             ]
@@ -47,7 +41,6 @@ class PauseMenu:
                         "mines": mines,
                         "board": board,
                         "initial_time": initial_time,
-                        "recorder": recorder,
                     },
                 }
             ]

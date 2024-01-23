@@ -8,7 +8,6 @@ from timer import Timer
 from .scorer import Scorer
 from storage import save_game
 from .save_game import store_game, delete_game
-from .Recorder import Recorder
 
 
 class GUICell:
@@ -298,7 +297,10 @@ class Board(Game, Page):
         border_size=1,
     ):
         # Initilaize the inherited game object
-        super().__init__(rows, columns, mines)
+        Page.__init__(
+            self,
+        )
+        Game.__init__(self, rows, columns, mines)
 
         # Initilaize the object
         self.title_text = "board"
@@ -328,17 +330,11 @@ class Board(Game, Page):
         # Initalize the score
         self.scorer = Scorer()
 
-        # Initalize the recoreder
-        self.recorder = Recorder()
-
         # Initlaize the board given
         if board:
             self.start_playing = True
             self.board = board
             self.timer.initial_time = initial_time
-
-        # Load the background
-        self.background = pygame.image.load("./assets/background.png")
 
         # Load the images of the cells
         self.covered_image = pygame.transform.scale(
@@ -542,7 +538,7 @@ class Board(Game, Page):
 
         self.menu = self.draw_small_button("Pause", (10, 30), screen, fonts)
 
-    def handle_events(self, playing_record=False):
+    def handle_events(self):
         REVEAL_MINES_OR_FLAGS_EVENT = pygame.USEREVENT + 1
         WIN_OR_LOSE_EVENT = pygame.USEREVENT + 2
 
@@ -552,7 +548,7 @@ class Board(Game, Page):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 # Save the game in case it was clicked while the game is not over, or before it even started and also a record isn't playing
-                if self.playing and not playing_record:
+                if self.playing:
                     store_game(
                         self.username,
                         self.rows,
@@ -598,16 +594,10 @@ class Board(Game, Page):
                         "state": state,
                         "difficulty": self.difficulty,
                         "initial_time": self.timer.get_elapsed_time(),
-                        "recorder": self.recorder,
-                        "is_recording": playing_record,
                     }
 
             # Handle clicking on cells
-            if (
-                event.type == pygame.MOUSEBUTTONDOWN
-                and not self.stop_input
-                and not playing_record
-            ):
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.stop_input:
                 coords = pygame.mouse.get_pos()
 
                 # This if statement aims to prevent a bug
@@ -620,9 +610,6 @@ class Board(Game, Page):
                     cell = self.cells[row * self.columns + column]
                     if event.button == 1 and not cell.is_flagged:
                         cell.reveal_cell()
-
-                        # Record flagging or unflagging the cell
-                        self.recorder.add_step(row, column, "click")
 
                         cell.handle_chord(cell.coordinates[0], cell.coordinates[1])
 
@@ -637,9 +624,6 @@ class Board(Game, Page):
 
                     elif event.button == 3 and not cell.is_clicked:
                         cell.flag_cell()
-
-                        # Record flagging or unflagging the cell
-                        self.recorder.add_step(row, column, "flag")
 
             if event.type == (REVEAL_MINES_OR_FLAGS_EVENT):
                 if self.start_playing and self.check_win():
@@ -698,7 +682,7 @@ class Board(Game, Page):
 
                 # If player won, take them to the game win page
                 if (
-                    self.start_playing and self.check_win() and not playing_record
+                    self.start_playing and self.check_win()
                 ):  # navigating to this page while recording will be handled in the RewatchGame Page
                     save_game(
                         self.username,
@@ -710,20 +694,16 @@ class Board(Game, Page):
                         self.timer.get_elapsed_time(),
                     )
 
-                    # Save the board in the recorder
-                    self.recorder.set_board(self.board)
-
                     # Navigate to Game Win Page
                     return "GAME_WIN", {
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
                         "difficulty": self.difficulty,
-                        "recorder": self.recorder.restart(),
                     }
 
                 # If player lost, take them to the GameLost page
-                if not self.playing and not playing_record:
+                if not self.playing:
                     save_game(
                         self.username,
                         self.difficulty,
@@ -734,16 +714,12 @@ class Board(Game, Page):
                         self.timer.get_elapsed_time(),
                     )
 
-                    # Save the board in the recorder
-                    self.recorder.set_board(self.board)
-
                     # Navigate to Game Lose Page
                     return "GAME_LOSE", {
                         "rows": self.rows,
                         "columns": self.columns,
                         "mines": self.mines,
                         "difficulty": self.difficulty,
-                        "recorder": self.recorder.restart(),
                     }
 
         return None, None

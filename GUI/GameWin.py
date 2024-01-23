@@ -4,7 +4,7 @@ from GUI.gui_constants import WIDTH, HEIGHT
 
 
 class GameWin(Page):
-    def __init__(self, username, rows, columns, mines, difficulty, recorder):
+    def __init__(self, username, rows, columns, mines, difficulty):
         super().__init__()
         self.title_text = "You WON!!!"
         self.navigation_buttons = []  # {obj: button, val: "Navigation Button", kwargs}
@@ -13,18 +13,11 @@ class GameWin(Page):
         self.columns = columns
         self.mines = mines
         self.difficulty = difficulty
-        self.recorder = recorder
-
-        # Load the images
-        self.button_coordinates = (300, 200)
 
         self.title_image = pygame.transform.scale(
             pygame.image.load("./assets/text/you-won.png"), (350, 100)
         )
 
-        self.rewatch_game = pygame.transform.scale(
-            pygame.image.load("./assets/text/rewatch-game.png"), (200, 50)
-        )
         self.restart_text = pygame.transform.scale(
             pygame.image.load("./assets/text/play-again.png"), (200, 50)
         )
@@ -81,23 +74,9 @@ class GameWin(Page):
 
         self.add_button(
             screen,
-            self.rewatch_game,
-            WIDTH // 2,
-            HEIGHT // 5 + 140,
-            "REWATCH",
-            kwargs={
-                "rows": self.rows,
-                "columns": self.columns,
-                "mines": self.mines,
-                "difficulty": self.difficulty,
-                "recorder": self.recorder.restart(),
-            },
-        )
-        self.add_button(
-            screen,
             self.restart_text,
             WIDTH // 2,
-            HEIGHT // 5 + 260,
+            HEIGHT // 5 + 180,
             "BOARD",
             kwargs={
                 "rows": self.rows,
@@ -107,8 +86,8 @@ class GameWin(Page):
             },
         )
         self.add_button(
-            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 380, "MAIN_MENU"
+            screen, self.back_text, WIDTH // 2, HEIGHT // 5 + 300, "MAIN_MENU"
         )
         self.add_button(
-            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 500, "QUIT_GAME"
+            screen, self.quit_text, WIDTH // 2, HEIGHT // 5 + 420, "QUIT_GAME"
         )
