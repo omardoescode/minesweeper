@@ -548,7 +548,7 @@ class Board(Game, Page):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 # Save the game in case it was clicked while the game is not over, or before it even started and also a record isn't playing
-                if self.playing:
+                if self.playing and self.start_playing:
                     store_game(
                         self.username,
                         self.rows,
